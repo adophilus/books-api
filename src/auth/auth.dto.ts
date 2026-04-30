@@ -16,3 +16,7 @@ export class AuthSignInDto {
 	@IsString()
 	password: string;
 }
+
+export class AuthSignInResponseDto {
+	accessToken: string;
+}
