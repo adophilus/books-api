@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthorDto } from './dto/create-author.dto';
-import { UpdateAuthorDto } from './dto/update-author.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Author } from "./entities/author.entity";
+import { Repository } from "typeorm";
+import { CreateAuthorDto } from "./dto/create-author.dto";
+import { UpdateAuthorDto } from "./dto/update-author.dto";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthorService {
-  create(createAuthorDto: CreateAuthorDto) {
-    return 'This action adds a new author';
-  }
+	constructor(
+		@InjectRepository(Author)
+		private readonly authorRepository: Repository<Author>,
+	) {}
 
-  findAll() {
-    return `This action returns all author`;
-  }
+	async create(createAuthorDto: CreateAuthorDto) {
+		const { password, ...authorData } = createAuthorDto;
+		// Note: in a real app, you'd link to an existing User via auth.
+		// For now, storing password hash directly on Author for simplicity.
+		const author = this.authorRepository.create({
+			...authorData,
+		});
+		return this.authorRepository.save(author);
+	}
 
-  findOne(id: number) {
-    return `This action returns a #${id} author`;
-  }
+	findAll() {
+		return this.authorRepository.find();
+	}
 
-  update(id: number, updateAuthorDto: UpdateAuthorDto) {
-    return `This action updates a #${id} author`;
-  }
+	async findOne(id: number) {
+		const author = await this.authorRepository.findOneBy({ id });
+		if (!author) throw new NotFoundException(`Author #${id} not found`);
+		return author;
+	}
 
-  remove(id: number) {
-    return `This action removes a #${id} author`;
-  }
+	async update(id: number, updateAuthorDto: UpdateAuthorDto) {
+		await this.findOne(id);
+		await this.authorRepository.update(id, updateAuthorDto);
+		return this.findOne(id);
+	}
+
+	async remove(id: number) {
+		const author = await this.findOne(id);
+		await this.authorRepository.remove(author);
+		return { deleted: true };
+	}
+
+	findBooksByAuthor(authorId: number) {
+		return this.authorRepository.findOne({
+			where: { id: authorId },
+			relations: ["books"],
+		}).then((author) => author?.books ?? []);
+	}
+
+	findVideosByAuthor(authorId: number) {
+		return this.authorRepository.findOne({
+			where: { id: authorId },
+			relations: ["videos"],
+		}).then((author) => author?.videos ?? []);
+	}
 }
