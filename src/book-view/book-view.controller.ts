@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { BookViewService } from "./book-view.service";
-import { CreateBookViewDto } from "./dto/create-book-view.dto";
+import { CreateBookViewDto } from "./dto/book-view.dto";
 
 @Controller()
 export class BookViewController {

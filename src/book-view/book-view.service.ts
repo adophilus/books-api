@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BookView } from "./entities/book-view.entity";
 import { Repository } from "typeorm";
-import { CreateBookViewDto } from "./dto/create-book-view.dto";
+import { CreateBookViewDto } from "./dto/book-view.dto";
 
 @Injectable()
 export class BookViewService {

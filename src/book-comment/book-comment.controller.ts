@@ -11,7 +11,7 @@ import { BookCommentService } from "./book-comment.service";
 import {
 	CreateBookCommentDto,
 	UpdateBookCommentDto,
-} from "./dto/create-book-comment.dto";
+} from "./dto/book-comment.dto";
 
 @Controller()
 export class BookCommentController {

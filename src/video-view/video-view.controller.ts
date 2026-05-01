@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { VideoViewService } from "./video-view.service";
-import { CreateVideoViewDto } from "./dto/create-video-view.dto";
+import { CreateVideoViewDto } from "./dto/video-view.dto";
 
 @Controller()
 export class VideoViewController {

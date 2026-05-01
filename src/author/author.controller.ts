@@ -10,8 +10,7 @@ import {
 	UseGuards,
 } from "@nestjs/common";
 import { AuthorService } from "./author.service";
-import { CreateAuthorDto } from "./dto/create-author.dto";
-import { UpdateAuthorDto } from "./dto/update-author.dto";
+import { CreateAuthorDto, UpdateAuthorDto } from "./dto/author.dto";
 import { BookService } from "../book/book.service";
 import { VideoService } from "../video/video.service";
 import { BookViewService } from "../book-view/book-view.service";

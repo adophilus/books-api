@@ -11,7 +11,7 @@ import { VideoCommentService } from "./video-comment.service";
 import {
 	CreateVideoCommentDto,
 	UpdateVideoCommentDto,
-} from "./dto/create-video-comment.dto";
+} from "./dto/video-comment.dto";
 
 @Controller()
 export class VideoCommentController {

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Video } from "./entities/video.entity";
 import { Repository } from "typeorm";
-import { CreateVideoDto, UpdateVideoDto } from "./dto/create-video.dto";
+import { CreateVideoDto, UpdateVideoDto } from "./dto/video.dto";
 
 @Injectable()
 export class VideoService {

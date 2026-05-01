@@ -8,7 +8,7 @@ import {
 	Put,
 } from "@nestjs/common";
 import { VideoService } from "./video.service";
-import { CreateVideoDto, UpdateVideoDto } from "./dto/create-video.dto";
+import { CreateVideoDto, UpdateVideoDto } from "./dto/video.dto";
 
 @Controller("videos")
 export class VideoController {
