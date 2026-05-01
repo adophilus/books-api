@@ -3,43 +3,40 @@ import {
 	Injectable,
 	NotFoundException,
 } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { BookView } from "./entities/book-view.entity";
-import { Repository } from "typeorm";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class BookViewService {
-	constructor(
-		@InjectRepository(BookView)
-		private readonly bookViewRepository: Repository<BookView>,
-	) {}
+	constructor(private readonly prisma: PrismaService) {}
 
 	async create(bookId: number, authorId: number) {
-		const view = this.bookViewRepository.create({
-			book: { id: bookId },
-			author: { id: authorId },
+		return this.prisma.bookView.create({
+			data: {
+				book: { connect: { id: bookId } },
+				author: { connect: { id: authorId } },
+			},
+			include: { author: true },
 		});
-		return this.bookViewRepository.save(view);
 	}
 
 	findByBook(bookId: number) {
-		return this.bookViewRepository.find({
-			where: { book: { id: bookId } },
-			relations: ["author"],
+		return this.prisma.bookView.findMany({
+			where: { bookId },
+			include: { author: true },
 		});
 	}
 
 	findByAuthor(authorId: number) {
-		return this.bookViewRepository.find({
-			where: { author: { id: authorId } },
-			relations: ["book", "book.author"],
+		return this.prisma.bookView.findMany({
+			where: { authorId },
+			include: { book: { include: { author: true } } },
 		});
 	}
 
 	async findOne(id: number) {
-		const view = await this.bookViewRepository.findOne({
+		const view = await this.prisma.bookView.findUnique({
 			where: { id },
-			relations: ["author", "book"],
+			include: { author: true, book: true },
 		});
 		if (!view) throw new NotFoundException(`BookView #${id} not found`);
 		return view;
@@ -47,8 +44,8 @@ export class BookViewService {
 
 	async remove(id: number, authorId: number) {
 		const view = await this.findOne(id);
-		if (view.author.id !== authorId) throw new ForbiddenException();
-		await this.bookViewRepository.remove(view);
+		if (view.authorId !== authorId) throw new ForbiddenException();
+		await this.prisma.bookView.delete({ where: { id: view.id } });
 		return { deleted: true };
 	}
 }

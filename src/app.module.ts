@@ -10,9 +10,9 @@ import { BookViewModule } from "./book-view/book-view.module";
 import { VideoViewModule } from "./video-view/video-view.module";
 import { BookCommentModule } from "./book-comment/book-comment.module";
 import { VideoCommentModule } from "./video-comment/video-comment.module";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
+import { PrismaModule } from "./prisma/prisma.module";
 import * as Joi from "joi";
-import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
 	imports: [
@@ -22,15 +22,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 				JWT_SECRET: Joi.string().min(32),
 			}),
 		}),
-		TypeOrmModule.forRootAsync({
-			inject: [ConfigService],
-			useFactory: (configService: ConfigService) => ({
-				type: "mysql",
-				url: configService.get<string>("DATABASE_URL"),
-				autoLoadEntities: true,
-				synchronize: true, // dev only — use migrations in production
-			}),
-		}),
+		PrismaModule,
 		AuthorModule,
 		AuthModule,
 		UsersModule,

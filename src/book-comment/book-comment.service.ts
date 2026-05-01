@@ -3,38 +3,35 @@ import {
 	Injectable,
 	NotFoundException,
 } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { BookComment } from "./entities/book-comment.entity";
-import { Repository } from "typeorm";
+import { PrismaService } from "../prisma/prisma.service";
 import { CreateBookCommentDto, UpdateBookCommentDto } from "./dto/book-comment.dto";
 
 @Injectable()
 export class BookCommentService {
-	constructor(
-		@InjectRepository(BookComment)
-		private readonly bookCommentRepository: Repository<BookComment>,
-	) {}
+	constructor(private readonly prisma: PrismaService) {}
 
 	async create(bookId: number, authorId: number, dto: CreateBookCommentDto) {
-		const comment = this.bookCommentRepository.create({
-			book: { id: bookId },
-			author: { id: authorId },
-			content: dto.content,
+		return this.prisma.bookComment.create({
+			data: {
+				book: { connect: { id: bookId } },
+				author: { connect: { id: authorId } },
+				content: dto.content,
+			},
+			include: { author: true },
 		});
-		return this.bookCommentRepository.save(comment);
 	}
 
 	findByBook(bookId: number) {
-		return this.bookCommentRepository.find({
-			where: { book: { id: bookId } },
-			relations: ["author"],
+		return this.prisma.bookComment.findMany({
+			where: { bookId },
+			include: { author: true },
 		});
 	}
 
 	async findOne(id: number) {
-		const comment = await this.bookCommentRepository.findOne({
+		const comment = await this.prisma.bookComment.findUnique({
 			where: { id },
-			relations: ["author", "book"],
+			include: { author: true, book: true },
 		});
 		if (!comment)
 			throw new NotFoundException(`BookComment #${id} not found`);
@@ -43,15 +40,18 @@ export class BookCommentService {
 
 	async update(id: number, authorId: number, dto: UpdateBookCommentDto) {
 		const comment = await this.findOne(id);
-		if (comment.author.id !== authorId) throw new ForbiddenException();
-		await this.bookCommentRepository.update(id, dto);
-		return this.findOne(id);
+		if (comment.authorId !== authorId) throw new ForbiddenException();
+		return this.prisma.bookComment.update({
+			where: { id },
+			data: dto,
+			include: { author: true },
+		});
 	}
 
 	async remove(id: number, authorId: number) {
 		const comment = await this.findOne(id);
-		if (comment.author.id !== authorId) throw new ForbiddenException();
-		await this.bookCommentRepository.remove(comment);
+		if (comment.authorId !== authorId) throw new ForbiddenException();
+		await this.prisma.bookComment.delete({ where: { id: comment.id } });
 		return { deleted: true };
 	}
 }

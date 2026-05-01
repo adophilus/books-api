@@ -3,38 +3,35 @@ import {
 	Injectable,
 	NotFoundException,
 } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { VideoComment } from "./entities/video-comment.entity";
-import { Repository } from "typeorm";
+import { PrismaService } from "../prisma/prisma.service";
 import { CreateVideoCommentDto, UpdateVideoCommentDto } from "./dto/video-comment.dto";
 
 @Injectable()
 export class VideoCommentService {
-	constructor(
-		@InjectRepository(VideoComment)
-		private readonly videoCommentRepository: Repository<VideoComment>,
-	) {}
+	constructor(private readonly prisma: PrismaService) {}
 
 	async create(videoId: number, authorId: number, dto: CreateVideoCommentDto) {
-		const comment = this.videoCommentRepository.create({
-			video: { id: videoId },
-			author: { id: authorId },
-			content: dto.content,
+		return this.prisma.videoComment.create({
+			data: {
+				video: { connect: { id: videoId } },
+				author: { connect: { id: authorId } },
+				content: dto.content,
+			},
+			include: { author: true },
 		});
-		return this.videoCommentRepository.save(comment);
 	}
 
 	findByVideo(videoId: number) {
-		return this.videoCommentRepository.find({
-			where: { video: { id: videoId } },
-			relations: ["author"],
+		return this.prisma.videoComment.findMany({
+			where: { videoId },
+			include: { author: true },
 		});
 	}
 
 	async findOne(id: number) {
-		const comment = await this.videoCommentRepository.findOne({
+		const comment = await this.prisma.videoComment.findUnique({
 			where: { id },
-			relations: ["author", "video"],
+			include: { author: true, video: true },
 		});
 		if (!comment)
 			throw new NotFoundException(`VideoComment #${id} not found`);
@@ -43,15 +40,18 @@ export class VideoCommentService {
 
 	async update(id: number, authorId: number, dto: UpdateVideoCommentDto) {
 		const comment = await this.findOne(id);
-		if (comment.author.id !== authorId) throw new ForbiddenException();
-		await this.videoCommentRepository.update(id, dto);
-		return this.findOne(id);
+		if (comment.authorId !== authorId) throw new ForbiddenException();
+		return this.prisma.videoComment.update({
+			where: { id },
+			data: dto,
+			include: { author: true },
+		});
 	}
 
 	async remove(id: number, authorId: number) {
 		const comment = await this.findOne(id);
-		if (comment.author.id !== authorId) throw new ForbiddenException();
-		await this.videoCommentRepository.remove(comment);
+		if (comment.authorId !== authorId) throw new ForbiddenException();
+		await this.prisma.videoComment.delete({ where: { id: comment.id } });
 		return { deleted: true };
 	}
 }

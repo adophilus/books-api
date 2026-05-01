@@ -3,78 +3,62 @@ import {
 	Injectable,
 	NotFoundException,
 } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Author } from "./entities/author.entity";
-import { Repository } from "typeorm";
+import { PrismaService } from "../prisma/prisma.service";
 import { CreateAuthorDto, UpdateAuthorDto } from "./dto/author.dto";
 
 @Injectable()
 export class AuthorService {
-	constructor(
-		@InjectRepository(Author)
-		private readonly authorRepository: Repository<Author>,
-	) {}
+	constructor(private readonly prisma: PrismaService) {}
 
 	async create(userId: number, createAuthorDto: CreateAuthorDto) {
-		const existing = await this.authorRepository.findOneBy({
-			user: { id: userId },
+		const existing = await this.prisma.author.findUnique({
+			where: { userId },
 		});
 		if (existing)
-			throw new BadRequestException("Author profile already exists for this user");
+			throw new BadRequestException(
+				"Author profile already exists for this user",
+			);
 
-		const author = this.authorRepository.create({
-			...createAuthorDto,
-			user: { id: userId },
+		return this.prisma.author.create({
+			data: {
+				...createAuthorDto,
+				user: { connect: { id: userId } },
+			},
 		});
-		return this.authorRepository.save(author);
 	}
 
 	findAll() {
-		return this.authorRepository.find();
+		return this.prisma.author.findMany();
 	}
 
 	async findOne(id: number) {
-		const author = await this.authorRepository.findOneBy({ id });
+		const author = await this.prisma.author.findUnique({ where: { id } });
 		if (!author) throw new NotFoundException(`Author #${id} not found`);
 		return author;
 	}
 
 	async update(id: number, updateAuthorDto: UpdateAuthorDto) {
 		await this.findOne(id);
-		await this.authorRepository.update(id, updateAuthorDto);
-		return this.findOne(id);
+		return this.prisma.author.update({
+			where: { id },
+			data: updateAuthorDto,
+		});
 	}
 
 	async remove(id: number) {
 		const author = await this.findOne(id);
-		await this.authorRepository.remove(author);
+		await this.prisma.author.delete({ where: { id: author.id } });
 		return { deleted: true };
 	}
 
-	async findBooksByAuthor(authorId: number) {
-		return this.authorRepository
-			.findOne({
-				where: { id: authorId },
-				relations: ["books"],
-			})
-			.then((author) => author?.books ?? []);
-	}
-
-	async findVideosByAuthor(authorId: number) {
-		return this.authorRepository
-			.findOne({
-				where: { id: authorId },
-				relations: ["videos"],
-			})
-			.then((author) => author?.videos ?? []);
-	}
-
 	async findByUserId(userId: number) {
-		const author = await this.authorRepository.findOne({
-			where: { user: { id: userId } },
+		const author = await this.prisma.author.findUnique({
+			where: { userId },
 		});
 		if (!author)
-			throw new NotFoundException("Author profile not found for this user");
+			throw new NotFoundException(
+				"Author profile not found for this user",
+			);
 		return author;
 	}
 }

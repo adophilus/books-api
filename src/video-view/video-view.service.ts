@@ -3,43 +3,40 @@ import {
 	Injectable,
 	NotFoundException,
 } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { VideoView } from "./entities/video-view.entity";
-import { Repository } from "typeorm";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class VideoViewService {
-	constructor(
-		@InjectRepository(VideoView)
-		private readonly videoViewRepository: Repository<VideoView>,
-	) {}
+	constructor(private readonly prisma: PrismaService) {}
 
 	async create(videoId: number, authorId: number) {
-		const view = this.videoViewRepository.create({
-			video: { id: videoId },
-			author: { id: authorId },
+		return this.prisma.videoView.create({
+			data: {
+				video: { connect: { id: videoId } },
+				author: { connect: { id: authorId } },
+			},
+			include: { author: true },
 		});
-		return this.videoViewRepository.save(view);
 	}
 
 	findByVideo(videoId: number) {
-		return this.videoViewRepository.find({
-			where: { video: { id: videoId } },
-			relations: ["author"],
+		return this.prisma.videoView.findMany({
+			where: { videoId },
+			include: { author: true },
 		});
 	}
 
 	findByAuthor(authorId: number) {
-		return this.videoViewRepository.find({
-			where: { author: { id: authorId } },
-			relations: ["video", "video.author"],
+		return this.prisma.videoView.findMany({
+			where: { authorId },
+			include: { video: { include: { author: true } } },
 		});
 	}
 
 	async findOne(id: number) {
-		const view = await this.videoViewRepository.findOne({
+		const view = await this.prisma.videoView.findUnique({
 			where: { id },
-			relations: ["author", "video"],
+			include: { author: true, video: true },
 		});
 		if (!view) throw new NotFoundException(`VideoView #${id} not found`);
 		return view;
@@ -47,8 +44,8 @@ export class VideoViewService {
 
 	async remove(id: number, authorId: number) {
 		const view = await this.findOne(id);
-		if (view.author.id !== authorId) throw new ForbiddenException();
-		await this.videoViewRepository.remove(view);
+		if (view.authorId !== authorId) throw new ForbiddenException();
+		await this.prisma.videoView.delete({ where: { id: view.id } });
 		return { deleted: true };
 	}
 }
