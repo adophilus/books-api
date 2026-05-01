@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { VideoView } from "./entities/video-view.entity";
 import { Repository } from "typeorm";
-import { CreateVideoViewDto } from "./dto/video-view.dto";
 
 @Injectable()
 export class VideoViewService {
@@ -11,10 +14,10 @@ export class VideoViewService {
 		private readonly videoViewRepository: Repository<VideoView>,
 	) {}
 
-	async create(videoId: number, createVideoViewDto: CreateVideoViewDto) {
+	async create(videoId: number, authorId: number) {
 		const view = this.videoViewRepository.create({
 			video: { id: videoId },
-			author: { id: createVideoViewDto.author_id },
+			author: { id: authorId },
 		});
 		return this.videoViewRepository.save(view);
 	}
@@ -42,8 +45,9 @@ export class VideoViewService {
 		return view;
 	}
 
-	async remove(id: number) {
+	async remove(id: number, authorId: number) {
 		const view = await this.findOne(id);
+		if (view.author.id !== authorId) throw new ForbiddenException();
 		await this.videoViewRepository.remove(view);
 		return { deleted: true };
 	}

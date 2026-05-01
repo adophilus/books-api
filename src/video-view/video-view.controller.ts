@@ -1,17 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Controller, Delete, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { VideoViewService } from "./video-view.service";
-import { CreateVideoViewDto } from "./dto/video-view.dto";
+import { AuthGuard } from "../auth/auth.guard";
+import { AuthorService } from "../author/author.service";
+import type { RequestWithUser } from "../auth/auth.guard";
 
 @Controller()
 export class VideoViewController {
-	constructor(private readonly videoViewService: VideoViewService) {}
+	constructor(
+		private readonly videoViewService: VideoViewService,
+		private readonly authorService: AuthorService,
+	) {}
 
+	@UseGuards(AuthGuard)
 	@Post("videos/:videoId/views")
-	create(
-		@Param("videoId") videoId: number,
-		@Body() createVideoViewDto: CreateVideoViewDto,
-	) {
-		return this.videoViewService.create(videoId, createVideoViewDto);
+	async create(@Param("videoId") videoId: number, @Req() req: RequestWithUser) {
+		const author = await this.authorService.findByUserId(req.user.sub);
+		return this.videoViewService.create(videoId, author.id);
 	}
 
 	@Get("videos/:videoId/views")
@@ -19,8 +23,10 @@ export class VideoViewController {
 		return this.videoViewService.findByVideo(videoId);
 	}
 
+	@UseGuards(AuthGuard)
 	@Delete("video-views/:id")
-	remove(@Param("id") id: number) {
-		return this.videoViewService.remove(id);
+	async remove(@Param("id") id: number, @Req() req: RequestWithUser) {
+		const author = await this.authorService.findByUserId(req.user.sub);
+		return this.videoViewService.remove(id, author.id);
 	}
 }

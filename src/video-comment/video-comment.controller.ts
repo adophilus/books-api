@@ -6,23 +6,34 @@ import {
 	Param,
 	Post,
 	Put,
+	Req,
+	UseGuards,
 } from "@nestjs/common";
 import { VideoCommentService } from "./video-comment.service";
 import {
 	CreateVideoCommentDto,
 	UpdateVideoCommentDto,
 } from "./dto/video-comment.dto";
+import { AuthGuard } from "../auth/auth.guard";
+import { AuthorService } from "../author/author.service";
+import type { RequestWithUser } from "../auth/auth.guard";
 
 @Controller()
 export class VideoCommentController {
-	constructor(private readonly videoCommentService: VideoCommentService) {}
+	constructor(
+		private readonly videoCommentService: VideoCommentService,
+		private readonly authorService: AuthorService,
+	) {}
 
+	@UseGuards(AuthGuard)
 	@Post("videos/:videoId/comments")
-	create(
+	async create(
 		@Param("videoId") videoId: number,
-		@Body() createVideoCommentDto: CreateVideoCommentDto,
+		@Body() dto: CreateVideoCommentDto,
+		@Req() req: RequestWithUser,
 	) {
-		return this.videoCommentService.create(videoId, createVideoCommentDto);
+		const author = await this.authorService.findByUserId(req.user.sub);
+		return this.videoCommentService.create(videoId, author.id, dto);
 	}
 
 	@Get("videos/:videoId/comments")
@@ -35,16 +46,21 @@ export class VideoCommentController {
 		return this.videoCommentService.findOne(id);
 	}
 
+	@UseGuards(AuthGuard)
 	@Put("video-comments/:id")
-	update(
+	async update(
 		@Param("id") id: number,
-		@Body() updateVideoCommentDto: UpdateVideoCommentDto,
+		@Body() dto: UpdateVideoCommentDto,
+		@Req() req: RequestWithUser,
 	) {
-		return this.videoCommentService.update(id, updateVideoCommentDto);
+		const author = await this.authorService.findByUserId(req.user.sub);
+		return this.videoCommentService.update(id, author.id, dto);
 	}
 
+	@UseGuards(AuthGuard)
 	@Delete("video-comments/:id")
-	remove(@Param("id") id: number) {
-		return this.videoCommentService.remove(id);
+	async remove(@Param("id") id: number, @Req() req: RequestWithUser) {
+		const author = await this.authorService.findByUserId(req.user.sub);
+		return this.videoCommentService.remove(id, author.id);
 	}
 }

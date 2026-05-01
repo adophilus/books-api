@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { AuthorController } from "./author.controller";
 import { AuthorService } from "./author.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -11,10 +11,10 @@ import { VideoViewModule } from "../video-view/video-view.module";
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Author]),
-		BookModule,
-		VideoModule,
-		BookViewModule,
-		VideoViewModule,
+		forwardRef(() => BookModule),
+		forwardRef(() => VideoModule),
+		forwardRef(() => BookViewModule),
+		forwardRef(() => VideoViewModule),
 	],
 	controllers: [AuthorController],
 	providers: [AuthorService],

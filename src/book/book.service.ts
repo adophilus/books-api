@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Book } from "./entities/book.entity";
 import { Repository } from "typeorm";
@@ -33,14 +37,16 @@ export class BookService {
 		return book;
 	}
 
-	async update(id: number, updateBookDto: UpdateBookDto) {
-		await this.findOne(id);
+	async update(id: number, authorId: number, updateBookDto: UpdateBookDto) {
+		const book = await this.findOne(id);
+		if (book.author.id !== authorId) throw new ForbiddenException();
 		await this.bookRepository.update(id, updateBookDto);
 		return this.findOne(id);
 	}
 
-	async remove(id: number) {
+	async remove(id: number, authorId: number) {
 		const book = await this.findOne(id);
+		if (book.author.id !== authorId) throw new ForbiddenException();
 		await this.bookRepository.remove(book);
 		return { deleted: true };
 	}

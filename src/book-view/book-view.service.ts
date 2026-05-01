@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BookView } from "./entities/book-view.entity";
 import { Repository } from "typeorm";
-import { CreateBookViewDto } from "./dto/book-view.dto";
 
 @Injectable()
 export class BookViewService {
@@ -11,10 +14,10 @@ export class BookViewService {
 		private readonly bookViewRepository: Repository<BookView>,
 	) {}
 
-	async create(bookId: number, createBookViewDto: CreateBookViewDto) {
+	async create(bookId: number, authorId: number) {
 		const view = this.bookViewRepository.create({
 			book: { id: bookId },
-			author: { id: createBookViewDto.author_id },
+			author: { id: authorId },
 		});
 		return this.bookViewRepository.save(view);
 	}
@@ -42,8 +45,9 @@ export class BookViewService {
 		return view;
 	}
 
-	async remove(id: number) {
+	async remove(id: number, authorId: number) {
 		const view = await this.findOne(id);
+		if (view.author.id !== authorId) throw new ForbiddenException();
 		await this.bookViewRepository.remove(view);
 		return { deleted: true };
 	}

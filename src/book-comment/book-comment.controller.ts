@@ -6,23 +6,34 @@ import {
 	Param,
 	Post,
 	Put,
+	Req,
+	UseGuards,
 } from "@nestjs/common";
 import { BookCommentService } from "./book-comment.service";
 import {
 	CreateBookCommentDto,
 	UpdateBookCommentDto,
 } from "./dto/book-comment.dto";
+import { AuthGuard } from "../auth/auth.guard";
+import { AuthorService } from "../author/author.service";
+import type { RequestWithUser } from "../auth/auth.guard";
 
 @Controller()
 export class BookCommentController {
-	constructor(private readonly bookCommentService: BookCommentService) {}
+	constructor(
+		private readonly bookCommentService: BookCommentService,
+		private readonly authorService: AuthorService,
+	) {}
 
+	@UseGuards(AuthGuard)
 	@Post("books/:bookId/comments")
-	create(
+	async create(
 		@Param("bookId") bookId: number,
-		@Body() createBookCommentDto: CreateBookCommentDto,
+		@Body() dto: CreateBookCommentDto,
+		@Req() req: RequestWithUser,
 	) {
-		return this.bookCommentService.create(bookId, createBookCommentDto);
+		const author = await this.authorService.findByUserId(req.user.sub);
+		return this.bookCommentService.create(bookId, author.id, dto);
 	}
 
 	@Get("books/:bookId/comments")
@@ -35,16 +46,21 @@ export class BookCommentController {
 		return this.bookCommentService.findOne(id);
 	}
 
+	@UseGuards(AuthGuard)
 	@Put("book-comments/:id")
-	update(
+	async update(
 		@Param("id") id: number,
-		@Body() updateBookCommentDto: UpdateBookCommentDto,
+		@Body() dto: UpdateBookCommentDto,
+		@Req() req: RequestWithUser,
 	) {
-		return this.bookCommentService.update(id, updateBookCommentDto);
+		const author = await this.authorService.findByUserId(req.user.sub);
+		return this.bookCommentService.update(id, author.id, dto);
 	}
 
+	@UseGuards(AuthGuard)
 	@Delete("book-comments/:id")
-	remove(@Param("id") id: number) {
-		return this.bookCommentService.remove(id);
+	async remove(@Param("id") id: number, @Req() req: RequestWithUser) {
+		const author = await this.authorService.findByUserId(req.user.sub);
+		return this.bookCommentService.remove(id, author.id);
 	}
 }

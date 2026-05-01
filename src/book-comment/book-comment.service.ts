@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BookComment } from "./entities/book-comment.entity";
 import { Repository } from "typeorm";
@@ -11,11 +15,11 @@ export class BookCommentService {
 		private readonly bookCommentRepository: Repository<BookComment>,
 	) {}
 
-	async create(bookId: number, createBookCommentDto: CreateBookCommentDto) {
+	async create(bookId: number, authorId: number, dto: CreateBookCommentDto) {
 		const comment = this.bookCommentRepository.create({
 			book: { id: bookId },
-			author: { id: createBookCommentDto.author_id },
-			content: createBookCommentDto.content,
+			author: { id: authorId },
+			content: dto.content,
 		});
 		return this.bookCommentRepository.save(comment);
 	}
@@ -37,14 +41,16 @@ export class BookCommentService {
 		return comment;
 	}
 
-	async update(id: number, updateBookCommentDto: UpdateBookCommentDto) {
-		await this.findOne(id);
-		await this.bookCommentRepository.update(id, updateBookCommentDto);
+	async update(id: number, authorId: number, dto: UpdateBookCommentDto) {
+		const comment = await this.findOne(id);
+		if (comment.author.id !== authorId) throw new ForbiddenException();
+		await this.bookCommentRepository.update(id, dto);
 		return this.findOne(id);
 	}
 
-	async remove(id: number) {
+	async remove(id: number, authorId: number) {
 		const comment = await this.findOne(id);
+		if (comment.author.id !== authorId) throw new ForbiddenException();
 		await this.bookCommentRepository.remove(comment);
 		return { deleted: true };
 	}

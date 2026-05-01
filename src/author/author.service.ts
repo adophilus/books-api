@@ -68,4 +68,13 @@ export class AuthorService {
 			})
 			.then((author) => author?.videos ?? []);
 	}
+
+	async findByUserId(userId: number) {
+		const author = await this.authorRepository.findOne({
+			where: { user: { id: userId } },
+		});
+		if (!author)
+			throw new NotFoundException("Author profile not found for this user");
+		return author;
+	}
 }

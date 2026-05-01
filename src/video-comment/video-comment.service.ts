@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { VideoComment } from "./entities/video-comment.entity";
 import { Repository } from "typeorm";
@@ -11,11 +15,11 @@ export class VideoCommentService {
 		private readonly videoCommentRepository: Repository<VideoComment>,
 	) {}
 
-	async create(videoId: number, createVideoCommentDto: CreateVideoCommentDto) {
+	async create(videoId: number, authorId: number, dto: CreateVideoCommentDto) {
 		const comment = this.videoCommentRepository.create({
 			video: { id: videoId },
-			author: { id: createVideoCommentDto.author_id },
-			content: createVideoCommentDto.content,
+			author: { id: authorId },
+			content: dto.content,
 		});
 		return this.videoCommentRepository.save(comment);
 	}
@@ -37,14 +41,16 @@ export class VideoCommentService {
 		return comment;
 	}
 
-	async update(id: number, updateVideoCommentDto: UpdateVideoCommentDto) {
-		await this.findOne(id);
-		await this.videoCommentRepository.update(id, updateVideoCommentDto);
+	async update(id: number, authorId: number, dto: UpdateVideoCommentDto) {
+		const comment = await this.findOne(id);
+		if (comment.author.id !== authorId) throw new ForbiddenException();
+		await this.videoCommentRepository.update(id, dto);
 		return this.findOne(id);
 	}
 
-	async remove(id: number) {
+	async remove(id: number, authorId: number) {
 		const comment = await this.findOne(id);
+		if (comment.author.id !== authorId) throw new ForbiddenException();
 		await this.videoCommentRepository.remove(comment);
 		return { deleted: true };
 	}
