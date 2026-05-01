@@ -8,7 +8,7 @@ import * as bcrypt from "bcrypt";
 export class AuthService {
 	constructor(
 		private readonly usersService: UsersService,
-		private jwtService: JwtService,
+		private readonly jwtService: JwtService,
 	) {}
 
 	async signUp(payload: AuthSignUpDto): Promise<void> {
