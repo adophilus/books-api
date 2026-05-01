@@ -1,0 +1,105 @@
+generator client {
+	provider = "prisma-client-js"
+}
+
+datasource db {
+	provider = "mysql"
+	url      = env("DATABASE_URL")
+}
+
+model User {
+	id       Int    @id @default(autoincrement())
+	email    String @unique
+	password String
+	author   Author?
+}
+
+model Author {
+	id             Int            @id @default(autoincrement())
+	name           String
+	email          String         @unique
+	userId         Int            @unique @map("user_id")
+	user           User           @relation(fields: [userId], references: [id])
+	books          Book[]
+	videos         Video[]
+	bookViews      BookView[]
+	videoViews     VideoView[]
+	bookComments   BookComment[]
+	videoComments  VideoComment[]
+	createdAt      DateTime       @default(now()) @map("created_at")
+
+	@@map("authors")
+}
+
+model Book {
+	id          Int           @id @default(autoincrement())
+	title       String
+	description String
+	authorId    Int           @map("author_id")
+	author      Author        @relation(fields: [authorId], references: [id])
+	views       BookView[]
+	comments    BookComment[]
+	createdAt   DateTime      @default(now()) @map("created_at")
+
+	@@map("books")
+}
+
+model Video {
+	id          Int            @id @default(autoincrement())
+	title       String
+	description String
+	url         String
+	authorId    Int            @map("author_id")
+	author      Author         @relation(fields: [authorId], references: [id])
+	views       VideoView[]
+	comments    VideoComment[]
+	createdAt   DateTime       @default(now()) @map("created_at")
+
+	@@map("videos")
+}
+
+model BookView {
+	id       Int      @id @default(autoincrement())
+	bookId   Int      @map("book_id")
+	book     Book     @relation(fields: [bookId], references: [id])
+	authorId Int      @map("author_id")
+	author   Author   @relation(fields: [authorId], references: [id])
+	viewedAt DateTime @default(now()) @map("viewed_at")
+
+	@@map("book_views")
+}
+
+model VideoView {
+	id       Int      @id @default(autoincrement())
+	videoId  Int      @map("video_id")
+	video    Video    @relation(fields: [videoId], references: [id])
+	authorId Int      @map("author_id")
+	author   Author   @relation(fields: [authorId], references: [id])
+	viewedAt DateTime @default(now()) @map("viewed_at")
+
+	@@map("video_views")
+}
+
+model BookComment {
+	id        Int      @id @default(autoincrement())
+	bookId    Int      @map("book_id")
+	book      Book     @relation(fields: [bookId], references: [id])
+	authorId  Int      @map("author_id")
+	author    Author   @relation(fields: [authorId], references: [id])
+	content   String
+	createdAt DateTime @default(now()) @map("created_at")
+
+	@@map("book_comments")
+}
+
+model VideoComment {
+	id        Int      @id @default(autoincrement())
+	videoId   Int      @map("video_id")
+	video     Video    @relation(fields: [videoId], references: [id])
+	authorId  Int      @map("author_id")
+	author    Author   @relation(fields: [authorId], references: [id])
+	content   String
+	createdAt DateTime @default(now()) @map("created_at")
+
+	@@map("video_comments")
+}
