@@ -1,10 +1,13 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Author } from "./entities/author.entity";
 import { Repository } from "typeorm";
 import { CreateAuthorDto } from "./dto/create-author.dto";
 import { UpdateAuthorDto } from "./dto/update-author.dto";
-import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthorService {
@@ -13,12 +16,16 @@ export class AuthorService {
 		private readonly authorRepository: Repository<Author>,
 	) {}
 
-	async create(createAuthorDto: CreateAuthorDto) {
-		const { password, ...authorData } = createAuthorDto;
-		// Note: in a real app, you'd link to an existing User via auth.
-		// For now, storing password hash directly on Author for simplicity.
+	async create(userId: number, createAuthorDto: CreateAuthorDto) {
+		const existing = await this.authorRepository.findOneBy({
+			user: { id: userId },
+		});
+		if (existing)
+			throw new BadRequestException("Author profile already exists for this user");
+
 		const author = this.authorRepository.create({
-			...authorData,
+			...createAuthorDto,
+			user: { id: userId },
 		});
 		return this.authorRepository.save(author);
 	}
@@ -45,17 +52,21 @@ export class AuthorService {
 		return { deleted: true };
 	}
 
-	findBooksByAuthor(authorId: number) {
-		return this.authorRepository.findOne({
-			where: { id: authorId },
-			relations: ["books"],
-		}).then((author) => author?.books ?? []);
+	async findBooksByAuthor(authorId: number) {
+		return this.authorRepository
+			.findOne({
+				where: { id: authorId },
+				relations: ["books"],
+			})
+			.then((author) => author?.books ?? []);
 	}
 
-	findVideosByAuthor(authorId: number) {
-		return this.authorRepository.findOne({
-			where: { id: authorId },
-			relations: ["videos"],
-		}).then((author) => author?.videos ?? []);
+	async findVideosByAuthor(authorId: number) {
+		return this.authorRepository
+			.findOne({
+				where: { id: authorId },
+				relations: ["videos"],
+			})
+			.then((author) => author?.videos ?? []);
 	}
 }

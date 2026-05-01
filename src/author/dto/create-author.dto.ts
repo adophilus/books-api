@@ -7,8 +7,4 @@ export class CreateAuthorDto {
 
 	@IsEmail()
 	email: string;
-
-	@IsNotEmpty()
-	@IsString()
-	password: string;
 }

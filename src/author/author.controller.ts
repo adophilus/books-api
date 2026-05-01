@@ -6,6 +6,8 @@ import {
 	Param,
 	Post,
 	Put,
+	Req,
+	UseGuards,
 } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { CreateAuthorDto } from "./dto/create-author.dto";
@@ -14,6 +16,8 @@ import { BookService } from "../book/book.service";
 import { VideoService } from "../video/video.service";
 import { BookViewService } from "../book-view/book-view.service";
 import { VideoViewService } from "../video-view/video-view.service";
+import { AuthGuard } from "../auth/auth.guard";
+import type { RequestWithUser } from "../auth/auth.guard";
 
 @Controller("authors")
 export class AuthorController {
@@ -25,9 +29,13 @@ export class AuthorController {
 		private readonly videoViewService: VideoViewService,
 	) {}
 
+	@UseGuards(AuthGuard)
 	@Post()
-	create(@Body() createAuthorDto: CreateAuthorDto) {
-		return this.authorService.create(createAuthorDto);
+	create(
+		@Body() createAuthorDto: CreateAuthorDto,
+		@Req() req: RequestWithUser,
+	) {
+		return this.authorService.create(req.user.sub, createAuthorDto);
 	}
 
 	@Get()
