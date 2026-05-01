@@ -8,19 +8,19 @@ export class BookViewController {
 
 	@Post("books/:bookId/views")
 	create(
-		@Param("bookId") bookId: string,
+		@Param("bookId") bookId: number,
 		@Body() createBookViewDto: CreateBookViewDto,
 	) {
-		return this.bookViewService.create(+bookId, createBookViewDto);
+		return this.bookViewService.create(bookId, createBookViewDto);
 	}
 
 	@Get("books/:bookId/views")
-	findByBook(@Param("bookId") bookId: string) {
-		return this.bookViewService.findByBook(+bookId);
+	findByBook(@Param("bookId") bookId: number) {
+		return this.bookViewService.findByBook(bookId);
 	}
 
 	@Delete("book-views/:id")
-	remove(@Param("id") id: string) {
-		return this.bookViewService.remove(+id);
+	remove(@Param("id") id: number) {
+		return this.bookViewService.remove(id);
 	}
 }

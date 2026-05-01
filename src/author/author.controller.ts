@@ -36,37 +36,37 @@ export class AuthorController {
 	}
 
 	@Get(":id")
-	findOne(@Param("id") id: string) {
-		return this.authorService.findOne(+id);
+	findOne(@Param("id") id: number) {
+		return this.authorService.findOne(id);
 	}
 
 	@Put(":id")
-	update(@Param("id") id: string, @Body() updateAuthorDto: UpdateAuthorDto) {
-		return this.authorService.update(+id, updateAuthorDto);
+	update(@Param("id") id: number, @Body() updateAuthorDto: UpdateAuthorDto) {
+		return this.authorService.update(id, updateAuthorDto);
 	}
 
 	@Delete(":id")
-	remove(@Param("id") id: string) {
-		return this.authorService.remove(+id);
+	remove(@Param("id") id: number) {
+		return this.authorService.remove(id);
 	}
 
 	@Get(":authorId/books")
-	findBooks(@Param("authorId") authorId: string) {
-		return this.bookService.findByAuthor(+authorId);
+	findBooks(@Param("authorId") authorId: number) {
+		return this.bookService.findByAuthor(authorId);
 	}
 
 	@Get(":authorId/videos")
-	findVideos(@Param("authorId") authorId: string) {
-		return this.videoService.findByAuthor(+authorId);
+	findVideos(@Param("authorId") authorId: number) {
+		return this.videoService.findByAuthor(authorId);
 	}
 
 	@Get(":authorId/book-views")
-	findBookViews(@Param("authorId") authorId: string) {
-		return this.bookViewService.findByAuthor(+authorId);
+	findBookViews(@Param("authorId") authorId: number) {
+		return this.bookViewService.findByAuthor(authorId);
 	}
 
 	@Get(":authorId/video-views")
-	findVideoViews(@Param("authorId") authorId: string) {
-		return this.videoViewService.findByAuthor(+authorId);
+	findVideoViews(@Param("authorId") authorId: number) {
+		return this.videoViewService.findByAuthor(authorId);
 	}
 }

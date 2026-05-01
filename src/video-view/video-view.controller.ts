@@ -8,19 +8,19 @@ export class VideoViewController {
 
 	@Post("videos/:videoId/views")
 	create(
-		@Param("videoId") videoId: string,
+		@Param("videoId") videoId: number,
 		@Body() createVideoViewDto: CreateVideoViewDto,
 	) {
-		return this.videoViewService.create(+videoId, createVideoViewDto);
+		return this.videoViewService.create(videoId, createVideoViewDto);
 	}
 
 	@Get("videos/:videoId/views")
-	findByVideo(@Param("videoId") videoId: string) {
-		return this.videoViewService.findByVideo(+videoId);
+	findByVideo(@Param("videoId") videoId: number) {
+		return this.videoViewService.findByVideo(videoId);
 	}
 
 	@Delete("video-views/:id")
-	remove(@Param("id") id: string) {
-		return this.videoViewService.remove(+id);
+	remove(@Param("id") id: number) {
+		return this.videoViewService.remove(id);
 	}
 }

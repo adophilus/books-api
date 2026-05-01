@@ -19,32 +19,32 @@ export class BookCommentController {
 
 	@Post("books/:bookId/comments")
 	create(
-		@Param("bookId") bookId: string,
+		@Param("bookId") bookId: number,
 		@Body() createBookCommentDto: CreateBookCommentDto,
 	) {
-		return this.bookCommentService.create(+bookId, createBookCommentDto);
+		return this.bookCommentService.create(bookId, createBookCommentDto);
 	}
 
 	@Get("books/:bookId/comments")
-	findByBook(@Param("bookId") bookId: string) {
-		return this.bookCommentService.findByBook(+bookId);
+	findByBook(@Param("bookId") bookId: number) {
+		return this.bookCommentService.findByBook(bookId);
 	}
 
 	@Get("book-comments/:id")
-	findOne(@Param("id") id: string) {
-		return this.bookCommentService.findOne(+id);
+	findOne(@Param("id") id: number) {
+		return this.bookCommentService.findOne(id);
 	}
 
 	@Put("book-comments/:id")
 	update(
-		@Param("id") id: string,
+		@Param("id") id: number,
 		@Body() updateBookCommentDto: UpdateBookCommentDto,
 	) {
-		return this.bookCommentService.update(+id, updateBookCommentDto);
+		return this.bookCommentService.update(id, updateBookCommentDto);
 	}
 
 	@Delete("book-comments/:id")
-	remove(@Param("id") id: string) {
-		return this.bookCommentService.remove(+id);
+	remove(@Param("id") id: number) {
+		return this.bookCommentService.remove(id);
 	}
 }
