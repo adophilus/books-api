@@ -1,0 +1,57 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsOptional, IsString } from "class-validator";
+
+export class VideoViewDto {
+	@ApiProperty()
+	id: string;
+
+	@ApiProperty()
+	code: string;
+
+	@ApiProperty()
+	videoId: string;
+
+	@ApiProperty()
+	authorId: string;
+
+	@ApiProperty()
+	viewedAt: Date;
+
+	@ApiProperty()
+	createdAt: Date;
+
+	@ApiProperty()
+	updatedAt: Date;
+}
+
+export class CreateVideoViewDto {
+	@ApiProperty()
+	@IsString()
+	videoId: string;
+
+	@ApiProperty()
+	@IsString()
+	authorId: string;
+}
+
+export class UpdateVideoViewDto {}
+
+export class FilterVideoViewDto {
+	@ApiPropertyOptional()
+	@IsOptional()
+	@IsString()
+	videoId?: string;
+
+	@ApiPropertyOptional()
+	@IsOptional()
+	@IsString()
+	authorId?: string;
+
+	@ApiPropertyOptional()
+	@IsOptional()
+	page?: number;
+
+	@ApiPropertyOptional()
+	@IsOptional()
+	limit?: number;
+}

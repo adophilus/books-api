@@ -6,99 +6,137 @@ datasource db {
 	provider = "mysql"
 }
 
-model User {
-	id       Int    @id @default(autoincrement())
-	email    String @unique
-	password String
-	author   Author?
-}
-
 model Author {
-	id            Int            @id @default(autoincrement())
-	name          String
-	email         String         @unique
-	userId        Int            @unique @map("user_id")
-	user          User           @relation(fields: [userId], references: [id])
+	id        String   @id @default(uuid())
+	code      String   @unique
+	name      String
+	email     String   @unique
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
 	books         Book[]
 	videos        Video[]
 	bookViews     BookView[]
 	videoViews    VideoView[]
 	bookComments  BookComment[]
 	videoComments VideoComment[]
-	createdAt     DateTime       @default(now()) @map("created_at")
 
 	@@map("authors")
 }
 
 model Book {
-	id          Int           @id @default(autoincrement())
+	id          String   @id @default(uuid())
+	code        String   @unique
 	title       String
-	description String
-	authorId    Int           @map("author_id")
-	author      Author        @relation(fields: [authorId], references: [id])
-	views       BookView[]
-	comments    BookComment[]
-	createdAt   DateTime      @default(now()) @map("created_at")
+	description String?
+	authorId    String
+	deleted     Boolean  @default(false)
+	archived    Boolean  @default(false)
+	createdAt   DateTime @default(now())
+	updatedAt   DateTime @updatedAt
 
+	author   Author        @relation(fields: [authorId], references: [id])
+	views    BookView[]
+	comments BookComment[]
+
+	@@index([authorId])
 	@@map("books")
 }
 
 model Video {
-	id          Int            @id @default(autoincrement())
+	id          String   @id @default(uuid())
+	code        String   @unique
 	title       String
-	description String
+	description String?
 	url         String
-	authorId    Int            @map("author_id")
-	author      Author         @relation(fields: [authorId], references: [id])
-	views       VideoView[]
-	comments    VideoComment[]
-	createdAt   DateTime       @default(now()) @map("created_at")
+	authorId    String
+	deleted     Boolean  @default(false)
+	archived    Boolean  @default(false)
+	createdAt   DateTime @default(now())
+	updatedAt   DateTime @updatedAt
 
+	author   Author         @relation(fields: [authorId], references: [id])
+	views    VideoView[]
+	comments VideoComment[]
+
+	@@index([authorId])
 	@@map("videos")
 }
 
 model BookView {
-	id       Int      @id @default(autoincrement())
-	bookId   Int      @map("book_id")
-	book     Book     @relation(fields: [bookId], references: [id])
-	authorId Int      @map("author_id")
-	author   Author   @relation(fields: [authorId], references: [id])
-	viewedAt DateTime @default(now()) @map("viewed_at")
+	id        String   @id @default(uuid())
+	code      String   @unique
+	bookId    String
+	authorId  String
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	viewedAt  DateTime @default(now())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
 
+	book   Book   @relation(fields: [bookId], references: [id])
+	author Author @relation(fields: [authorId], references: [id])
+
+	@@index([bookId])
+	@@index([authorId])
 	@@map("book_views")
 }
 
 model VideoView {
-	id       Int      @id @default(autoincrement())
-	videoId  Int      @map("video_id")
-	video    Video    @relation(fields: [videoId], references: [id])
-	authorId Int      @map("author_id")
-	author   Author   @relation(fields: [authorId], references: [id])
-	viewedAt DateTime @default(now()) @map("viewed_at")
+	id        String   @id @default(uuid())
+	code      String   @unique
+	videoId   String
+	authorId  String
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	viewedAt  DateTime @default(now())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
 
+	video  Video  @relation(fields: [videoId], references: [id])
+	author Author @relation(fields: [authorId], references: [id])
+
+	@@index([videoId])
+	@@index([authorId])
 	@@map("video_views")
 }
 
 model BookComment {
-	id        Int      @id @default(autoincrement())
-	bookId    Int      @map("book_id")
-	book      Book     @relation(fields: [bookId], references: [id])
-	authorId  Int      @map("author_id")
-	author    Author   @relation(fields: [authorId], references: [id])
+	id        String   @id @default(uuid())
+	code      String   @unique
+	bookId    String
+	authorId  String
 	content   String
-	createdAt DateTime @default(now()) @map("created_at")
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
 
+	book   Book   @relation(fields: [bookId], references: [id])
+	author Author @relation(fields: [authorId], references: [id])
+
+	@@index([bookId])
+	@@index([authorId])
 	@@map("book_comments")
 }
 
 model VideoComment {
-	id        Int      @id @default(autoincrement())
-	videoId   Int      @map("video_id")
-	video     Video    @relation(fields: [videoId], references: [id])
-	authorId  Int      @map("author_id")
-	author    Author   @relation(fields: [authorId], references: [id])
+	id        String   @id @default(uuid())
+	code      String   @unique
+	videoId   String
+	authorId  String
 	content   String
-	createdAt DateTime @default(now()) @map("created_at")
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
 
+	video  Video  @relation(fields: [videoId], references: [id])
+	author Author @relation(fields: [authorId], references: [id])
+
+	@@index([videoId])
+	@@index([authorId])
 	@@map("video_comments")
 }
