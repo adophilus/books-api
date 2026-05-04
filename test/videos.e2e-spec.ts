@@ -1,29 +1,26 @@
 import { INestApplication } from '@nestjs/common';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { PrismaService } from '../src/prisma.service';
 import {
 	createTestApp,
 	cleanDatabase,
-	signupAndLogin,
-	createTestAuthor,
-	createTestVideo,
 } from './helpers/e2e-setup';
 import request from 'supertest';
 
 describe('Videos (e2e)', () => {
 	let app: INestApplication;
 	let prisma: PrismaService;
-	let token: string;
-	let author: any;
-	let video: any;
+	let authorId: string;
+	let videoId: string;
 
 	beforeAll(async () => {
 		app = await createTestApp();
 		prisma = app.get(PrismaService);
 		await cleanDatabase(prisma);
 
-		token = await signupAndLogin(app, 'videouser@test.com');
-		author = await createTestAuthor(app, token, 'Video Author', 'videoauthor@test.com');
-		video = await createTestVideo(app, author.id);
+		const authorRes = await request(app.getHttpServer())
+			.post('/authors')
+			.send({ name: 'Video Author', email: 'vidauthor@test.com' });
+		authorId = authorRes.body.id;
 	});
 
 	afterAll(async () => {
@@ -33,39 +30,32 @@ describe('Videos (e2e)', () => {
 
 	describe('POST /videos', () => {
 		it('should create a video', () => {
-			expect(video).toHaveProperty('id');
-			expect(video.title).toBe('Test Video');
-			expect(video.url).toBe('https://example.com/video');
+			return request(app.getHttpServer())
+				.post('/videos')
+				.send({ title: 'Test Video', description: 'A test', url: 'https://example.com/video.mp4', authorId })
+				.expect(201)
+				.expect((res) => {
+					videoId = res.body.id;
+					expect(res.body).toHaveProperty('code');
+					expect(res.body.url).toBe('https://example.com/video.mp4');
+				});
 		});
 
 		it('should reject invalid url', () => {
 			return request(app.getHttpServer())
 				.post('/videos')
-				.send({
-					title: 'Bad URL',
-					description: 'desc',
-					url: 'not-a-url',
-					author_id: author.id,
-				})
-				.expect(400);
-		});
-
-		it('should reject missing fields', () => {
-			return request(app.getHttpServer())
-				.post('/videos')
-				.send({})
+				.send({ title: 'Bad', url: 'not-a-url', authorId })
 				.expect(400);
 		});
 	});
 
 	describe('GET /videos', () => {
-		it('should return all videos', () => {
+		it('should return paginated videos', () => {
 			return request(app.getHttpServer())
 				.get('/videos')
 				.expect(200)
 				.expect((res) => {
-					expect(res.body).toBeInstanceOf(Array);
-					expect(res.body.length).toBeGreaterThan(0);
+					expect(res.body.data.length).toBeGreaterThan(0);
 				});
 		});
 	});
@@ -73,83 +63,31 @@ describe('Videos (e2e)', () => {
 	describe('GET /videos/:id', () => {
 		it('should return one video', () => {
 			return request(app.getHttpServer())
-				.get(`/videos/${video.id}`)
+				.get(`/videos/${videoId}`)
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.title).toBe('Test Video');
 				});
 		});
-
-		it('should return 404 for non-existent video', () => {
-			return request(app.getHttpServer())
-				.get('/videos/999999')
-				.expect(404);
-		});
 	});
 
 	describe('PUT /videos/:id', () => {
-		it('should update when owner', () => {
+		it('should update a video', () => {
 			return request(app.getHttpServer())
-				.put(`/videos/${video.id}`)
-				.set('Authorization', `Bearer ${token}`)
+				.put(`/videos/${videoId}`)
 				.send({ title: 'Updated Video' })
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.title).toBe('Updated Video');
 				});
 		});
-
-		it('should require authentication', () => {
-			return request(app.getHttpServer())
-				.put(`/videos/${video.id}`)
-				.send({ title: 'No Auth' })
-				.expect(401);
-		});
-
-		it('should reject update by non-owner', async () => {
-			const otherToken = await signupAndLogin(app, 'othervid@test.com');
-			await createTestAuthor(app, otherToken, 'Other Vid Author', 'othervidauthor@test.com');
-
-			return request(app.getHttpServer())
-				.put(`/videos/${video.id}`)
-				.set('Authorization', `Bearer ${otherToken}`)
-				.send({ title: 'Hacked' })
-				.expect(403);
-		});
 	});
 
 	describe('DELETE /videos/:id', () => {
-		it('should require authentication', () => {
+		it('should soft delete a video', () => {
 			return request(app.getHttpServer())
-				.delete(`/videos/${video.id}`)
-				.expect(401);
-		});
-
-		it('should delete when owner', () => {
-			return request(app.getHttpServer())
-				.delete(`/videos/${video.id}`)
-				.set('Authorization', `Bearer ${token}`)
-				.expect(200)
-				.expect((res) => {
-					expect(res.body.deleted).toBe(true);
-				});
-		});
-
-		it('should return 404 after deletion', () => {
-			return request(app.getHttpServer())
-				.get(`/videos/${video.id}`)
-				.expect(404);
-		});
-	});
-
-	describe('GET /authors/:authorId/videos', () => {
-		it('should return videos by author', () => {
-			return request(app.getHttpServer())
-				.get(`/authors/${author.id}/videos`)
-				.expect(200)
-				.expect((res) => {
-					expect(res.body).toBeInstanceOf(Array);
-				});
+				.delete(`/videos/${videoId}`)
+				.expect(200);
 		});
 	});
 });

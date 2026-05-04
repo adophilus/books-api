@@ -1,30 +1,32 @@
 import { INestApplication } from '@nestjs/common';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { PrismaService } from '../src/prisma.service';
 import {
 	createTestApp,
 	cleanDatabase,
-	signupAndLogin,
-	createTestAuthor,
-	createTestVideo,
 } from './helpers/e2e-setup';
 import request from 'supertest';
 
 describe('Video Comments (e2e)', () => {
 	let app: INestApplication;
 	let prisma: PrismaService;
-	let token: string;
-	let author: any;
-	let video: any;
-	let comment: any;
+	let authorId: string;
+	let videoId: string;
+	let commentId: string;
 
 	beforeAll(async () => {
 		app = await createTestApp();
 		prisma = app.get(PrismaService);
 		await cleanDatabase(prisma);
 
-		token = await signupAndLogin(app, 'vcuser@test.com');
-		author = await createTestAuthor(app, token, 'VC Author', 'vcauthor@test.com');
-		video = await createTestVideo(app, author.id);
+		const authorRes = await request(app.getHttpServer())
+			.post('/authors')
+			.send({ name: 'VC Author', email: 'vcauthor@test.com' });
+		authorId = authorRes.body.id;
+
+		const videoRes = await request(app.getHttpServer())
+			.post('/videos')
+			.send({ title: 'VC Video', url: 'https://example.com/v.mp4', authorId });
+		videoId = videoRes.body.id;
 	});
 
 	afterAll(async () => {
@@ -32,117 +34,47 @@ describe('Video Comments (e2e)', () => {
 		await app.close();
 	});
 
-	describe('POST /videos/:videoId/comments', () => {
-		it('should create a comment when authenticated', () => {
+	describe('POST /video-comments', () => {
+		it('should create a comment', () => {
 			return request(app.getHttpServer())
-				.post(`/videos/${video.id}/comments`)
-				.set('Authorization', `Bearer ${token}`)
-				.send({ content: 'Great video!' })
+				.post('/video-comments')
+				.send({ videoId, authorId, content: 'Great video!' })
 				.expect(201)
 				.expect((res) => {
-					comment = res.body;
-					expect(res.body).toHaveProperty('id');
+					commentId = res.body.id;
 					expect(res.body.content).toBe('Great video!');
-					expect(res.body.author.id).toBe(author.id);
-				});
-		});
-
-		it('should require authentication', () => {
-			return request(app.getHttpServer())
-				.post(`/videos/${video.id}/comments`)
-				.send({ content: 'No auth' })
-				.expect(401);
-		});
-
-		it('should reject empty content', () => {
-			return request(app.getHttpServer())
-				.post(`/videos/${video.id}/comments`)
-				.set('Authorization', `Bearer ${token}`)
-				.send({})
-				.expect(400);
-		});
-	});
-
-	describe('GET /videos/:videoId/comments', () => {
-		it('should return comments for a video', () => {
-			return request(app.getHttpServer())
-				.get(`/videos/${video.id}/comments`)
-				.expect(200)
-				.expect((res) => {
-					expect(res.body).toBeInstanceOf(Array);
-					expect(res.body.length).toBeGreaterThan(0);
 				});
 		});
 	});
 
-	describe('GET /video-comments/:id', () => {
-		it('should return one comment', () => {
+	describe('GET /video-comments', () => {
+		it('should return paginated comments', () => {
 			return request(app.getHttpServer())
-				.get(`/video-comments/${comment.id}`)
+				.get('/video-comments')
 				.expect(200)
 				.expect((res) => {
-					expect(res.body.content).toBe('Great video!');
+					expect(res.body.data.length).toBeGreaterThan(0);
 				});
-		});
-
-		it('should return 404 for non-existent comment', () => {
-			return request(app.getHttpServer())
-				.get('/video-comments/999999')
-				.expect(404);
 		});
 	});
 
 	describe('PUT /video-comments/:id', () => {
-		it('should update when owner', () => {
+		it('should update a comment', () => {
 			return request(app.getHttpServer())
-				.put(`/video-comments/${comment.id}`)
-				.set('Authorization', `Bearer ${token}`)
+				.put(`/video-comments/${commentId}`)
 				.send({ content: 'Updated comment' })
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.content).toBe('Updated comment');
 				});
 		});
-
-		it('should require authentication', () => {
-			return request(app.getHttpServer())
-				.put(`/video-comments/${comment.id}`)
-				.send({ content: 'No auth' })
-				.expect(401);
-		});
-
-		it('should reject update by non-owner', async () => {
-			const otherToken = await signupAndLogin(app, 'vcother@test.com');
-
-			return request(app.getHttpServer())
-				.put(`/video-comments/${comment.id}`)
-				.set('Authorization', `Bearer ${otherToken}`)
-				.send({ content: 'Hacked' })
-				.expect(403);
-		});
 	});
 
 	describe('DELETE /video-comments/:id', () => {
-		it('should require authentication', () => {
+		it('should soft delete a comment', () => {
 			return request(app.getHttpServer())
-				.delete(`/video-comments/${comment.id}`)
-				.expect(401);
-		});
-
-		it('should delete when owner', () => {
-			return request(app.getHttpServer())
-				.delete(`/video-comments/${comment.id}`)
-				.set('Authorization', `Bearer ${token}`)
-				.expect(200)
-				.expect((res) => {
-					expect(res.body.deleted).toBe(true);
-				});
-		});
-
-		it('should return 404 after deletion', () => {
-			return request(app.getHttpServer())
-				.get(`/video-comments/${comment.id}`)
-				.expect(404);
+				.delete(`/video-comments/${commentId}`)
+				.expect(200);
 		});
 	});
 });

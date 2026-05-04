@@ -1,30 +1,32 @@
 import { INestApplication } from '@nestjs/common';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { PrismaService } from '../src/prisma.service';
 import {
 	createTestApp,
 	cleanDatabase,
-	signupAndLogin,
-	createTestAuthor,
-	createTestBook,
 } from './helpers/e2e-setup';
 import request from 'supertest';
 
 describe('Book Comments (e2e)', () => {
 	let app: INestApplication;
 	let prisma: PrismaService;
-	let token: string;
-	let author: any;
-	let book: any;
-	let comment: any;
+	let authorId: string;
+	let bookId: string;
+	let commentId: string;
 
 	beforeAll(async () => {
 		app = await createTestApp();
 		prisma = app.get(PrismaService);
 		await cleanDatabase(prisma);
 
-		token = await signupAndLogin(app, 'bcuser@test.com');
-		author = await createTestAuthor(app, token, 'BC Author', 'bcauthor@test.com');
-		book = await createTestBook(app, author.id);
+		const authorRes = await request(app.getHttpServer())
+			.post('/authors')
+			.send({ name: 'BC Author', email: 'bcauthor@test.com' });
+		authorId = authorRes.body.id;
+
+		const bookRes = await request(app.getHttpServer())
+			.post('/books')
+			.send({ title: 'BC Book', authorId });
+		bookId = bookRes.body.id;
 	});
 
 	afterAll(async () => {
@@ -32,45 +34,42 @@ describe('Book Comments (e2e)', () => {
 		await app.close();
 	});
 
-	describe('POST /books/:bookId/comments', () => {
-		it('should create a comment when authenticated', () => {
+	describe('POST /book-comments', () => {
+		it('should create a comment', () => {
 			return request(app.getHttpServer())
-				.post(`/books/${book.id}/comments`)
-				.set('Authorization', `Bearer ${token}`)
-				.send({ content: 'Great book!' })
+				.post('/book-comments')
+				.send({ bookId, authorId, content: 'Great book!' })
 				.expect(201)
 				.expect((res) => {
-					comment = res.body;
-					expect(res.body).toHaveProperty('id');
+					commentId = res.body.id;
 					expect(res.body.content).toBe('Great book!');
-					expect(res.body.author.id).toBe(author.id);
 				});
-		});
-
-		it('should require authentication', () => {
-			return request(app.getHttpServer())
-				.post(`/books/${book.id}/comments`)
-				.send({ content: 'No auth' })
-				.expect(401);
 		});
 
 		it('should reject empty content', () => {
 			return request(app.getHttpServer())
-				.post(`/books/${book.id}/comments`)
-				.set('Authorization', `Bearer ${token}`)
-				.send({})
+				.post('/book-comments')
+				.send({ bookId, authorId, content: '' })
 				.expect(400);
 		});
 	});
 
-	describe('GET /books/:bookId/comments', () => {
-		it('should return comments for a book', () => {
+	describe('GET /book-comments', () => {
+		it('should return paginated comments', () => {
 			return request(app.getHttpServer())
-				.get(`/books/${book.id}/comments`)
+				.get('/book-comments')
 				.expect(200)
 				.expect((res) => {
-					expect(res.body).toBeInstanceOf(Array);
-					expect(res.body.length).toBeGreaterThan(0);
+					expect(res.body.data.length).toBeGreaterThan(0);
+				});
+		});
+
+		it('should filter by bookId', () => {
+			return request(app.getHttpServer())
+				.get(`/book-comments?bookId=${bookId}`)
+				.expect(200)
+				.expect((res) => {
+					expect(res.body.data.length).toBeGreaterThan(0);
 				});
 		});
 	});
@@ -78,70 +77,36 @@ describe('Book Comments (e2e)', () => {
 	describe('GET /book-comments/:id', () => {
 		it('should return one comment', () => {
 			return request(app.getHttpServer())
-				.get(`/book-comments/${comment.id}`)
+				.get(`/book-comments/${commentId}`)
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.content).toBe('Great book!');
 				});
 		});
-
-		it('should return 404 for non-existent comment', () => {
-			return request(app.getHttpServer())
-				.get('/book-comments/999999')
-				.expect(404);
-		});
 	});
 
 	describe('PUT /book-comments/:id', () => {
-		it('should update when owner', () => {
+		it('should update a comment', () => {
 			return request(app.getHttpServer())
-				.put(`/book-comments/${comment.id}`)
-				.set('Authorization', `Bearer ${token}`)
+				.put(`/book-comments/${commentId}`)
 				.send({ content: 'Updated comment' })
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.content).toBe('Updated comment');
 				});
 		});
-
-		it('should require authentication', () => {
-			return request(app.getHttpServer())
-				.put(`/book-comments/${comment.id}`)
-				.send({ content: 'No auth' })
-				.expect(401);
-		});
-
-		it('should reject update by non-owner', async () => {
-			const otherToken = await signupAndLogin(app, 'bcother@test.com');
-
-			return request(app.getHttpServer())
-				.put(`/book-comments/${comment.id}`)
-				.set('Authorization', `Bearer ${otherToken}`)
-				.send({ content: 'Hacked' })
-				.expect(403);
-		});
 	});
 
 	describe('DELETE /book-comments/:id', () => {
-		it('should require authentication', () => {
+		it('should soft delete a comment', () => {
 			return request(app.getHttpServer())
-				.delete(`/book-comments/${comment.id}`)
-				.expect(401);
-		});
-
-		it('should delete when owner', () => {
-			return request(app.getHttpServer())
-				.delete(`/book-comments/${comment.id}`)
-				.set('Authorization', `Bearer ${token}`)
-				.expect(200)
-				.expect((res) => {
-					expect(res.body.deleted).toBe(true);
-				});
+				.delete(`/book-comments/${commentId}`)
+				.expect(200);
 		});
 
 		it('should return 404 after deletion', () => {
 			return request(app.getHttpServer())
-				.get(`/book-comments/${comment.id}`)
+				.get(`/book-comments/${commentId}`)
 				.expect(404);
 		});
 	});

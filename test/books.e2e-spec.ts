@@ -1,29 +1,26 @@
 import { INestApplication } from '@nestjs/common';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { PrismaService } from '../src/prisma.service';
 import {
 	createTestApp,
 	cleanDatabase,
-	signupAndLogin,
-	createTestAuthor,
-	createTestBook,
 } from './helpers/e2e-setup';
 import request from 'supertest';
 
 describe('Books (e2e)', () => {
 	let app: INestApplication;
 	let prisma: PrismaService;
-	let token: string;
-	let author: any;
-	let book: any;
+	let authorId: string;
+	let bookId: string;
 
 	beforeAll(async () => {
 		app = await createTestApp();
 		prisma = app.get(PrismaService);
 		await cleanDatabase(prisma);
 
-		token = await signupAndLogin(app, 'bookuser@test.com');
-		author = await createTestAuthor(app, token, 'Book Author', 'bookauthor@test.com');
-		book = await createTestBook(app, author.id);
+		const authorRes = await request(app.getHttpServer())
+			.post('/authors')
+			.send({ name: 'Book Author', email: 'bookauthor@test.com' });
+		authorId = authorRes.body.id;
 	});
 
 	afterAll(async () => {
@@ -33,27 +30,50 @@ describe('Books (e2e)', () => {
 
 	describe('POST /books', () => {
 		it('should create a book', () => {
-			expect(book).toHaveProperty('id');
-			expect(book.title).toBe('Test Book');
-			expect(book.author.id).toBe(author.id);
+			return request(app.getHttpServer())
+				.post('/books')
+				.send({ title: 'Test Book', description: 'A test', authorId })
+				.expect(201)
+				.expect((res) => {
+					bookId = res.body.id;
+					expect(res.body).toHaveProperty('code');
+					expect(res.body.title).toBe('Test Book');
+					expect(res.body.authorId).toBe(authorId);
+				});
 		});
 
-		it('should reject invalid input', () => {
+		it('should reject missing fields', () => {
 			return request(app.getHttpServer())
 				.post('/books')
 				.send({})
 				.expect(400);
 		});
+
+		it('should reject invalid authorId', () => {
+			return request(app.getHttpServer())
+				.post('/books')
+				.send({ title: 'Bad', authorId: 'non-existent-id' })
+				.expect(404);
+		});
 	});
 
 	describe('GET /books', () => {
-		it('should return all books', () => {
+		it('should return paginated books', () => {
 			return request(app.getHttpServer())
 				.get('/books')
 				.expect(200)
 				.expect((res) => {
-					expect(res.body).toBeInstanceOf(Array);
-					expect(res.body.length).toBeGreaterThan(0);
+					expect(res.body).toHaveProperty('data');
+					expect(res.body.data.length).toBeGreaterThan(0);
+				});
+		});
+
+		it('should filter by authorId', () => {
+			return request(app.getHttpServer())
+				.get(`/books?authorId=${authorId}`)
+				.expect(200)
+				.expect((res) => {
+					expect(res.body.data.length).toBeGreaterThan(0);
 				});
 		});
 	});
@@ -61,83 +81,43 @@ describe('Books (e2e)', () => {
 	describe('GET /books/:id', () => {
 		it('should return one book', () => {
 			return request(app.getHttpServer())
-				.get(`/books/${book.id}`)
+				.get(`/books/${bookId}`)
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.title).toBe('Test Book');
 				});
 		});
 
-		it('should return 404 for non-existent book', () => {
+		it('should return 404 for non-existent', () => {
 			return request(app.getHttpServer())
-				.get('/books/999999')
+				.get('/books/00000000-0000-0000-0000-000000000000')
 				.expect(404);
 		});
 	});
 
 	describe('PUT /books/:id', () => {
-		it('should update a book when owner', () => {
+		it('should update a book', () => {
 			return request(app.getHttpServer())
-				.put(`/books/${book.id}`)
-				.set('Authorization', `Bearer ${token}`)
+				.put(`/books/${bookId}`)
 				.send({ title: 'Updated Book' })
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.title).toBe('Updated Book');
 				});
 		});
-
-		it('should require authentication', () => {
-			return request(app.getHttpServer())
-				.put(`/books/${book.id}`)
-				.send({ title: 'No Auth' })
-				.expect(401);
-		});
-
-		it('should reject update by non-owner', async () => {
-			const otherToken = await signupAndLogin(app, 'other@test.com');
-			await createTestAuthor(app, otherToken, 'Other Author', 'otherauthor@test.com');
-
-			return request(app.getHttpServer())
-				.put(`/books/${book.id}`)
-				.set('Authorization', `Bearer ${otherToken}`)
-				.send({ title: 'Hacked' })
-				.expect(403);
-		});
 	});
 
 	describe('DELETE /books/:id', () => {
-		it('should require authentication', () => {
+		it('should soft delete a book', () => {
 			return request(app.getHttpServer())
-				.delete(`/books/${book.id}`)
-				.expect(401);
-		});
-
-		it('should delete a book when owner', () => {
-			return request(app.getHttpServer())
-				.delete(`/books/${book.id}`)
-				.set('Authorization', `Bearer ${token}`)
-				.expect(200)
-				.expect((res) => {
-					expect(res.body.deleted).toBe(true);
-				});
+				.delete(`/books/${bookId}`)
+				.expect(200);
 		});
 
 		it('should return 404 after deletion', () => {
 			return request(app.getHttpServer())
-				.get(`/books/${book.id}`)
+				.get(`/books/${bookId}`)
 				.expect(404);
-		});
-	});
-
-	describe('GET /authors/:authorId/books', () => {
-		it('should return books by author', () => {
-			return request(app.getHttpServer())
-				.get(`/authors/${author.id}/books`)
-				.expect(200)
-				.expect((res) => {
-					expect(res.body).toBeInstanceOf(Array);
-				});
 		});
 	});
 });

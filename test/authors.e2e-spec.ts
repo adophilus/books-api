@@ -1,26 +1,19 @@
 import { INestApplication } from '@nestjs/common';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { PrismaService } from '../src/prisma.service';
 import {
 	createTestApp,
 	cleanDatabase,
-	signupAndLogin,
-	createTestAuthor,
 } from './helpers/e2e-setup';
 import request from 'supertest';
 
 describe('Authors (e2e)', () => {
 	let app: INestApplication;
 	let prisma: PrismaService;
-	let token: string;
-	let author: any;
 
 	beforeAll(async () => {
 		app = await createTestApp();
 		prisma = app.get(PrismaService);
 		await cleanDatabase(prisma);
-
-		token = await signupAndLogin(app, 'author@test.com');
-		author = await createTestAuthor(app, token, 'Test Author', 'author@test.com');
 	});
 
 	afterAll(async () => {
@@ -29,69 +22,86 @@ describe('Authors (e2e)', () => {
 	});
 
 	describe('POST /authors', () => {
-		it('should create an author profile', () => {
-			expect(author).toHaveProperty('id');
-			expect(author.name).toBe('Test Author');
-			expect(author.email).toBe('author@test.com');
-		});
-
-		it('should require authentication', () => {
+		it('should create an author', () => {
 			return request(app.getHttpServer())
 				.post('/authors')
-				.send({ name: 'No Auth', email: 'noauth@test.com' })
-				.expect(401);
+				.send({ name: 'Test Author', email: 'author@test.com' })
+				.expect(201)
+				.expect((res) => {
+					expect(res.body).toHaveProperty('id');
+					expect(res.body).toHaveProperty('code');
+					expect(res.body.name).toBe('Test Author');
+				});
 		});
 
-		it('should reject duplicate profile for same user', () => {
+		it('should reject missing fields', () => {
 			return request(app.getHttpServer())
 				.post('/authors')
-				.set('Authorization', `Bearer ${token}`)
-				.send({ name: 'Duplicate', email: 'dup@test.com' })
+				.send({})
 				.expect(400);
 		});
 
-		it('should reject invalid input', () => {
+		it('should reject invalid email', () => {
 			return request(app.getHttpServer())
 				.post('/authors')
-				.set('Authorization', `Bearer ${token}`)
-				.send({})
+				.send({ name: 'Bad', email: 'not-an-email' })
 				.expect(400);
 		});
 	});
 
 	describe('GET /authors', () => {
-		it('should return all authors', () => {
+		it('should return paginated authors', () => {
 			return request(app.getHttpServer())
 				.get('/authors')
 				.expect(200)
 				.expect((res) => {
-					expect(res.body).toBeInstanceOf(Array);
-					expect(res.body.length).toBeGreaterThan(0);
+					expect(res.body).toHaveProperty('page');
+					expect(res.body).toHaveProperty('limit');
+					expect(res.body).toHaveProperty('total');
+					expect(res.body.data).toBeInstanceOf(Array);
 				});
 		});
 	});
 
 	describe('GET /authors/:id', () => {
+		let authorId: string;
+
+		beforeAll(async () => {
+			const res = await request(app.getHttpServer())
+				.post('/authors')
+				.send({ name: 'Find Me', email: 'find@test.com' });
+			authorId = res.body.id;
+		});
+
 		it('should return one author', () => {
 			return request(app.getHttpServer())
-				.get(`/authors/${author.id}`)
+				.get(`/authors/${authorId}`)
 				.expect(200)
 				.expect((res) => {
-					expect(res.body.name).toBe('Test Author');
+					expect(res.body.name).toBe('Find Me');
 				});
 		});
 
 		it('should return 404 for non-existent author', () => {
 			return request(app.getHttpServer())
-				.get('/authors/999999')
+				.get('/authors/00000000-0000-0000-0000-000000000000')
 				.expect(404);
 		});
 	});
 
 	describe('PUT /authors/:id', () => {
+		let authorId: string;
+
+		beforeAll(async () => {
+			const res = await request(app.getHttpServer())
+				.post('/authors')
+				.send({ name: 'Update Me', email: 'update@test.com' });
+			authorId = res.body.id;
+		});
+
 		it('should update an author', () => {
 			return request(app.getHttpServer())
-				.put(`/authors/${author.id}`)
+				.put(`/authors/${authorId}`)
 				.send({ name: 'Updated Author' })
 				.expect(200)
 				.expect((res) => {
@@ -100,19 +110,28 @@ describe('Authors (e2e)', () => {
 		});
 	});
 
-	describe('DELETE /authors/:id', () => {
-		it('should delete an author', () => {
+	describe('DELETE /authors/:id (soft delete)', () => {
+		let authorId: string;
+
+		beforeAll(async () => {
+			const res = await request(app.getHttpServer())
+				.post('/authors')
+				.send({ name: 'Delete Me', email: 'delete@test.com' });
+			authorId = res.body.id;
+		});
+
+		it('should soft delete an author', () => {
 			return request(app.getHttpServer())
-				.delete(`/authors/${author.id}`)
+				.delete(`/authors/${authorId}`)
 				.expect(200)
 				.expect((res) => {
-					expect(res.body.deleted).toBe(true);
+					expect(res.body.id).toBe(authorId);
 				});
 		});
 
-		it('should return 404 after deletion', () => {
+		it('should return 404 after soft delete', () => {
 			return request(app.getHttpServer())
-				.get(`/authors/${author.id}`)
+				.get(`/authors/${authorId}`)
 				.expect(404);
 		});
 	});
