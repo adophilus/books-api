@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bulletin de Note – Collège Polyvalent MCD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      * {
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td,
+      th {
+        border: 1px solid #999;
+        padding: 2px 4px;
+      }
+      .blue {
+        color: #1a56db;
+        font-weight: bold;
+      }
+      .group-header td {
+        background: #c8d8f0;
+        font-weight: bold;
+        font-style: italic;
+        padding: 3px 6px;
+        border: 1px solid #999;
+      }
+    </style>
+  </head>
+  <body class="bg-white p-5" style="max-width: 960px; margin: auto">
+    <!-- ===== EN-TÊTE ===== -->
+    <table style="border: none; margin-bottom: 6px">
+      <tr>
+        <td
+          style="
+            border: none;
+            width: 33%;
+            text-align: center;
+            vertical-align: top;
+          "
+        >
+          <div style="font-weight: bold">RÉPUBLIQUE DU CAMEROUN</div>
+          <div style="font-style: italic">Paix - Travail - Patrie</div>
+          <div style="font-weight: bold">
+            MINISTÈRE DE L'ENSEIGNEMENT SECONDAIRE
+          </div>
+          <div>BP 000, Yaoundé TEL. +237675107349</div>
+        </td>
+        <td
+          style="
+            border: none;
+            width: 34%;
+            text-align: center;
+            vertical-align: middle;
+          "
+        >
+          <div
+            style="
+              display: inline-block;
+              border: 2px solid #c00;
+              border-radius: 50%;
+              width: 72px;
+              height: 72px;
+              text-align: center;
+              line-height: 72px;
+              font-weight: bold;
+              font-size: 13px;
+              color: #c00;
+            "
+          >
+            MCD
+          </div>
+        </td>
+        <td
+          style="
+            border: none;
+            width: 33%;
+            text-align: center;
+            vertical-align: top;
+          "
+        >
+          <div style="font-weight: bold">REPUBLIC OF CAMEROON</div>
+          <div style="font-style: italic">Peace - Work - Fatherland</div>
+          <div style="font-weight: bold">MINISTRY OF SECONDARY EDUCATION</div>
+          <div>BP 000, Yaoundé TEL. +237675107349</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ===== TITRE ===== -->
+    <div style="text-align: center; margin-bottom: 6px">
+      <div>Collège Polyvalent MCD</div>
+      <div style="font-weight: bold; font-size: 15px">
+        BULLETIN DE NOTE / REPORT CARD - T1
+      </div>
+    </div>
+
+    <!-- ===== INFOS ÉLÈVE ===== -->
+    <table style="margin-bottom: 4px">
+      <tr>
+        <td colspan="5" style="padding: 2px 4px; font-weight: bold">
+          Nom / Name : MOMO SOBZE JUSTINE FRANCE
+        </td>
+      </tr>
+      <tr>
+        <td
+          rowspan="3"
+          style="
+            font-weight: bold;
+            vertical-align: top;
+            padding: 4px 8px;
+            width: 70px;
+          "
+        >
+          PHOTO
+        </td>
+        <td style="border: none; padding: 1px 6px">Matricule / ID : 25E743A</td>
+        <td style="border: none; padding: 1px 6px">Sexe / Sex : F</td>
+        <td style="border: none; padding: 1px 6px">
+          <strong>Classe / Class : 2nde All</strong>
+        </td>
+        <td style="border: none; padding: 1px 6px">
+          Effectif / Enrollment : 4
+        </td>
+      </tr>
+      <tr>
+        <td style="border: none; padding: 1px 6px">
+          Né(e) le / Born on : -- --
+        </td>
+        <td style="border: none; padding: 1px 6px">Lieu / Place : -- --</td>
+        <td colspan="2" style="border: none; padding: 1px 6px">
+          Nationalité / Nationality : Camerounaise
+        </td>
+      </tr>
+      <tr>
+        <td style="border: none; padding: 1px 6px">
+          Parent / Guardian : -- --
+        </td>
+        <td colspan="2" style="border: none; padding: 1px 6px">
+          Redoublant / Repeating : Non / No
+        </td>
+        <td style="border: none; padding: 1px 6px">
+          Prof titulaire / Class Master : -- --
+        </td>
+      </tr>
+    </table>
+
+    <!-- ===== TABLEAU DES NOTES ===== -->
+    <table style="margin-bottom: 4px">
+      <thead>
+        <!-- Ligne 1 : groupes de colonnes -->
+        <tr style="background: #e8eaf0; text-align: center">
+          <th rowspan="2" style="width: 140px">Matière<br />Subject</th>
+          <th rowspan="2" style="width: 90px">Compétences<br />Skills</th>
+          <th rowspan="2" style="width: 36px">Coef<br />Weight</th>
+          <th colspan="2" style="background: #d6e4f7">S1</th>
+          <th colspan="2" style="background: #e8eaf0">S2</th>
+          <th colspan="2" style="background: #fef9e7">T1</th>
+        </tr>
+        <!-- Ligne 2 : sous-colonnes -->
+        <tr style="text-align: center; font-size: 10px">
+          <th style="width: 50px; background: #d6e4f7">Note<br />Grade</th>
+          <th style="width: 72px; background: #d6e4f7">
+            Note×Coef<br />Grade×Weight
+          </th>
+          <th style="width: 50px">Note<br />Grade</th>
+          <th style="width: 72px">Note×Coef<br />Grade×Weight</th>
+          <th style="width: 72px; background: #fef9e7">
+            Note×Coef<br />Grade×Weight
+          </th>
+          <th style="width: 90px; background: #fef9e7">
+            Appréciation<br />Appreciation
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- ══════════════════════════════════════ -->
+        <!-- GROUPE 1 : SCIENCES & TECHNIQUES       -->
+        <!-- ══════════════════════════════════════ -->
+        <tr class="group-header">
+          <td colspan="9">
+            Groupe 1 : Sciences &amp; Techniques / Group 1: Science &amp;
+            Technology
+          </td>
+        </tr>
+        <!-- EPS -->
+        <tr>
+          <td style="font-weight: bold">EPS</td>
+          <td></td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">24</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">24</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">Bien / Good</td>
+        </tr>
+        <!-- ESF -->
+        <tr>
+          <td style="font-weight: bold">ESF</td>
+          <td></td>
+          <td class="blue" style="text-align: center">1</td>
+          <td style="text-align: center">13</td>
+          <td style="text-align: center">13</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12.5</td>
+          <td style="text-align: center">Bien / Good</td>
+        </tr>
+        <!-- INFORMATIQUE -->
+        <tr>
+          <td style="font-weight: bold">INFORMATIQUE</td>
+          <td></td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">2.5</td>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">1.75</td>
+          <td style="text-align: center">insuff</td>
+        </tr>
+        <!-- MATHEMATIQUES -->
+        <tr>
+          <td style="font-weight: bold">MATHEMATIQUES</td>
+          <td></td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">1.25</td>
+          <td style="text-align: center">2.5</td>
+          <td style="text-align: center">2.63</td>
+          <td style="text-align: center">insuff</td>
+        </tr>
+        <!-- SVT -->
+        <tr>
+          <td style="font-weight: bold">SVT</td>
+          <td></td>
+          <td class="blue" style="text-align: center">1</td>
+          <td style="text-align: center">6.5</td>
+          <td style="text-align: center">6.5</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">7.25</td>
+          <td style="text-align: center">Pass</td>
+        </tr>
+        <!-- TRAVAIL MANUEL -->
+        <tr>
+          <td style="font-weight: bold">TRAVAIL MANUEL</td>
+          <td></td>
+          <td class="blue" style="text-align: center">1</td>
+          <td style="text-align: center">20</td>
+          <td style="text-align: center">20</td>
+          <td style="text-align: center">20</td>
+          <td style="text-align: center">20</td>
+          <td style="text-align: center">20</td>
+          <td style="text-align: center">T.B / Exc</td>
+        </tr>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- GROUPE 2 : LANGUES & LITTÉRATURE       -->
+        <!-- ══════════════════════════════════════ -->
+        <tr class="group-header">
+          <td colspan="9">
+            Groupe 2 : Langues &amp; Littérature / Group 2: Languages &amp;
+            Literature
+          </td>
+        </tr>
+        <!-- ALLEMAND/ESPAGNOL -->
+        <tr>
+          <td style="font-weight: bold">ALLEMAND/ESPAGNOL</td>
+          <td></td>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">15</td>
+          <td style="text-align: center">6</td>
+          <td style="text-align: center">18</td>
+          <td style="text-align: center">5.5</td>
+          <td style="text-align: center">insuff</td>
+        </tr>
+        <!-- ANGLAIS -->
+        <tr>
+          <td style="font-weight: bold">ANGLAIS</td>
+          <td></td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">9</td>
+          <td style="text-align: center">36</td>
+          <td style="text-align: center">9</td>
+          <td style="text-align: center">36</td>
+          <td style="text-align: center">9</td>
+          <td style="text-align: center">Pass</td>
+        </tr>
+        <!-- LANGUE FRANCAISE -->
+        <tr>
+          <td style="font-weight: bold">LANGUE FRANCAISE</td>
+          <td></td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">6</td>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">10</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">insuff</td>
+        </tr>
+        <!-- LITTERATURE FRANCAISE -->
+        <tr>
+          <td style="font-weight: bold">LITTERATURE FRANCAISE</td>
+          <td></td>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">15</td>
+          <td style="text-align: center">6</td>
+          <td style="text-align: center">18</td>
+          <td style="text-align: center">5.5</td>
+          <td style="text-align: center">insuff</td>
+        </tr>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- GROUPE 3 : SCIENCES HUMAINES           -->
+        <!-- ══════════════════════════════════════ -->
+        <tr class="group-header">
+          <td colspan="9">
+            Groupe 3 : Sciences Humaines / Group 3: Humanities
+          </td>
+        </tr>
+        <!-- ECM -->
+        <tr>
+          <td style="font-weight: bold">ECM</td>
+          <td></td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">10</td>
+          <td style="text-align: center">6</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">5.5</td>
+          <td style="text-align: center">insuff</td>
+        </tr>
+        <!-- GEOGRAPHIE -->
+        <tr>
+          <td style="font-weight: bold">GEOGRAPHIE</td>
+          <td></td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+        </tr>
+        <!-- HISTOIRE -->
+        <tr>
+          <td style="font-weight: bold">HISTOIRE</td>
+          <td></td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">8.75</td>
+          <td style="text-align: center">17.5</td>
+          <td style="text-align: center">5.75</td>
+          <td style="text-align: center">11.5</td>
+          <td style="text-align: center">7.25</td>
+          <td style="text-align: center">Pass</td>
+        </tr>
+        <!-- PHILOSOPHIE -->
+        <tr>
+          <td style="font-weight: bold">PHILOSOPHIE</td>
+          <td></td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">10</td>
+          <td style="text-align: center">20</td>
+          <td style="text-align: center">7</td>
+          <td style="text-align: center">14</td>
+          <td style="text-align: center">8.5</td>
+          <td style="text-align: center">Pass</td>
+        </tr>
+
+        <!-- TOTAL -->
+        <tr style="background: #e8eaf0; font-weight: bold">
+          <td colspan="2" style="text-align: right; padding-right: 6px">
+            TOTAL<br /><span style="font-size: 9px; font-weight: normal"
+              >Total</span
+            >
+          </td>
+          <td style="text-align: center">29</td>
+          <td colspan="2" style="text-align: center">193 / 27</td>
+          <td colspan="2" style="text-align: center">191 / 27</td>
+          <td colspan="2" style="text-align: center">192.01 / 27</td>
+        </tr>
+
+        <!-- MOYENNE / RANG -->
+        <!-- <tr style="background: #dbeafe; font-weight: bold">
+          <td colspan="2" style="text-align: right; padding-right: 6px">
+            MOYENNE / RANG<br /><span
+              style="font-size: 9px; font-weight: normal"
+              >Average / Rank</span
+            >
+          </td>
+          <td></td>
+          <td class="blue" style="text-align: center">7.15</td>
+          <td style="text-align: center">3</td>
+          <td class="blue" style="text-align: center">7.07</td>
+          <td style="text-align: center">3</td>
+          <td class="blue" style="text-align: center">7.11</td>
+          <td style="text-align: center"></td>
+        </tr> -->
+
+        <!-- MOYENNE / RANG -->
+        <tr style="background: #dbeafe; font-weight: bold">
+          <td colspan="2" style="text-align: right; padding-right: 6px">
+            MOYENNE / RANG<br />
+            <span style="font-size: 9px; font-weight: normal"
+              >Average / Rank</span
+            >
+          </td>
+          <td></td>
+          <td class="blue" style="text-align: center">Moy: 7.15</td>
+          <td style="text-align: center">Rang: 3</td>
+          <td class="blue" style="text-align: center">Moy: 7.07</td>
+          <td style="text-align: center">Rang: 3</td>
+          <td class="blue" style="text-align: center">Moy: 7.11</td>
+          <td style="text-align: center">Rang: -</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ===== STATS ===== -->
+    <table style="margin-bottom: 4px">
+      <tr>
+        <td style="width: 20%; padding: 2px 6px">
+          <strong>1er : 0.00</strong><br /><span style="font-size: 9px"
+            >Highest Avg</span
+          >
+        </td>
+        <td style="width: 20%; padding: 2px 6px">
+          <strong>Dernier : 0.00</strong><br /><span style="font-size: 9px"
+            >Lowest Avg</span
+          >
+        </td>
+        <td style="width: 20%; padding: 2px 6px">
+          <strong>Admis : 0</strong><br /><span style="font-size: 9px"
+            >Passed</span
+          >
+        </td>
+        <td style="width: 20%; padding: 2px 6px">
+          <strong>Taux : 0.00%</strong><br /><span style="font-size: 9px"
+            >Pass Rate</span
+          >
+        </td>
+        <td style="width: 20%; padding: 2px 6px">
+          <strong>Moy. Classe : 0.00</strong><br /><span style="font-size: 9px"
+            >Class Avg</span
+          >
+        </td>
+      </tr>
+    </table>
+
+    <!-- ===== DÉCISION / MENTION / ABSENCES / PUNITIONS ===== -->
+    <table style="margin-bottom: 6px">
+      <tr>
+        <td style="width: 22%; padding: 2px 6px">
+          Décision : -<br /><span style="font-size: 9px">Decision</span>
+        </td>
+        <td style="width: 22%; padding: 2px 6px">
+          <span class="blue">Mention : NA</span><br /><span
+            style="font-size: 9px"
+            >Grade</span
+          >
+        </td>
+        <td style="width: 28%; padding: 2px 6px">
+          Absences : 0 h<br /><span style="font-size: 9px">Absences</span>
+        </td>
+        <td style="width: 28%; padding: 2px 6px">
+          Punitions : 0<br /><span style="font-size: 9px">Punishments</span>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ===== RÉCAPITULATIF ===== -->
+    <!-- <div style="font-weight: bold; margin-bottom: 3px">
+      RÉCAPITULATIF TRAVAIL DE L'ÉLÈVE / STUDENT'S WORK SUMMARY
+    </div>
+    <table style="margin-bottom: 6px">
+      <thead>
+        <tr style="background: #e8eaf0">
+          <th style="text-align: left; padding: 2px 4px; width: 75%">
+            Trimestre / Séquence<br /><span
+              style="font-size: 9px; font-weight: normal"
+              >Term / Sequence</span
+            >
+          </th>
+          <th style="text-align: center; padding: 2px 4px; width: 12.5%">
+            Moy. / 20<br /><span style="font-size: 9px; font-weight: normal"
+              >Avg / 20</span
+            >
+          </th>
+          <th style="text-align: center; padding: 2px 4px; width: 12.5%">
+            Rang<br /><span style="font-size: 9px; font-weight: normal"
+              >Rank</span
+            >
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 2px 4px">Aucune donnée / No data</td>
+          <td style="text-align: center; padding: 2px 4px">-</td>
+          <td style="text-align: center; padding: 2px 4px">-</td>
+        </tr>
+      </tbody>
+    </table> -->
+
+    <!-- ===== RÉCAPITULATIF ===== -->
+    <div style="font-weight: bold; margin-bottom: 3px">
+      RÉCAPITULATIF TRAVAIL DE L'ÉLÈVE / STUDENT'S WORK SUMMARY
+    </div>
+    <table style="margin-bottom: 6px">
+      <thead>
+        <tr style="background: #e8eaf0">
+          <th style="text-align: left; padding: 2px 4px; width: 75%">
+            Trimestre / Séquence<br /><span
+              style="font-size: 9px; font-weight: normal"
+              >Term / Sequence</span
+            >
+          </th>
+          <th style="text-align: center; padding: 2px 4px; width: 12.5%">
+            Moy. / 20<br /><span style="font-size: 9px; font-weight: normal"
+              >Avg / 20</span
+            >
+          </th>
+          <th style="text-align: center; padding: 2px 4px; width: 12.5%">
+            Rang<br /><span style="font-size: 9px; font-weight: normal"
+              >Rank</span
+            >
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 2px 4px">S1</td>
+          <td style="text-align: center; padding: 2px 4px">7.15</td>
+          <td style="text-align: center; padding: 2px 4px">3</td>
+        </tr>
+        <tr>
+          <td style="padding: 2px 4px">S2</td>
+          <td style="text-align: center; padding: 2px 4px">7.07</td>
+          <td style="text-align: center; padding: 2px 4px">3</td>
+        </tr>
+        <tr>
+          <td style="padding: 2px 4px">T1</td>
+          <td style="text-align: center; padding: 2px 4px">7.11</td>
+          <td style="text-align: center; padding: 2px 4px">-</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ===== SIGNATURES ===== -->
+    <table style="height: 130px">
+      <thead>
+        <tr style="background: #e8eaf0">
+          <th style="text-align: center; width: 50%; padding: 3px 4px">
+            OBSERVATION ET VISA DU PARENT<br />
+            <span style="font-size: 9px"
+              >Parent's Observation &amp; Signature</span
+            >
+          </th>
+          <th style="text-align: center; width: 50%; padding: 3px 4px">
+            VISA DU PRINCIPAL<br />
+            <span style="font-size: 9px">Principal's Signature</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="height: 110px">
+          <td
+            style="
+              text-align: center;
+              vertical-align: bottom;
+              padding-bottom: 12px;
+            "
+          >
+            <div
+              style="
+                border-top: 1px solid #555;
+                width: 160px;
+                margin: 0 auto 4px auto;
+              "
+            ></div>
+            <span class="blue">Signature du Parent</span><br />
+            <span class="blue" style="font-size: 9px">Parent's Signature</span>
+          </td>
+          <td
+            style="
+              text-align: center;
+              vertical-align: bottom;
+              padding-bottom: 12px;
+            "
+          >
+            <div
+              style="
+                border-top: 1px solid #555;
+                width: 160px;
+                margin: 0 auto 4px auto;
+              "
+            ></div>
+            <span class="blue">Signature &amp; Cachet</span><br />
+            <span class="blue" style="font-size: 9px"
+              >Signature &amp; Stamp</span
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
