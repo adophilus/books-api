@@ -1,4 +1,3 @@
-import { Account } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import slugify from 'slugify';
@@ -65,6 +64,13 @@ export const generateMatricule = (role: string): string => {
       PAYMENT_CONFIG: 'PC',
       STUDENT_PAYMENT: 'SP',
       PAYMENT_DISCOUNT: 'PD',
+      AUTHOR: 'AUT',
+      BOOK: 'BOK',
+      VIDEO: 'VID',
+      BOOK_VIEW: 'BKV',
+      VIDEO_VIEW: 'VDV',
+      BOOK_COMMENT: 'BKC',
+      VIDEO_COMMENT: 'VDC',
     }[role] || 'E';
 
   // Générer 4 caractères alphanumériques
