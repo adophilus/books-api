@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
 import { AuthorsService } from "../authors/authors.service";
 import { VideosService } from "../videos/videos.service";
-import { generateMatricule } from "../utils";
+import { generateMatricule } from "../@1hand/utils";
 import {
 	CreateVideoViewDto,
 	UpdateVideoViewDto,

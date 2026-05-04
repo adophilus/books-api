@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
-import { generateMatricule } from "../utils";
+import { generateMatricule } from "../@1hand/utils";
 import {
 	CreateAuthorDto,
 	UpdateAuthorDto,

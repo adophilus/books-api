@@ -9,7 +9,7 @@ import {
 	Query,
 	UsePipes,
 } from "@nestjs/common";
-import { JoiValidationPipe } from "../pipes/JoiValidatorPipe";
+import { JoiValidationPipe } from "../@1hand/pipes/JoiValidatorPipe";
 import { VideosService } from "./videos.service";
 import {
 	CreateVideoDto,
