@@ -140,3 +140,54 @@ model VideoComment {
 	@@index([authorId])
 	@@map("video_comments")
 }
+
+model Account {
+	id        String   @id @default(uuid())
+	username  String   @unique
+	email     String   @unique
+	password  String
+	role      String
+	firstName String
+	lastName  String
+	gender    String?
+	photo     String?
+	birthDate DateTime?
+	emailConfirmed Boolean @default(false)
+	lastLogin DateTime?
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	matricule String   @unique
+	phoneNumber String?
+	city      String?
+	region    String?
+	blocked   Boolean  @default(false)
+	lockedUntil DateTime?
+	notes     String?
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+
+	media Media[]
+
+	@@map("accounts")
+}
+
+model Media {
+	id           String   @id @default(uuid())
+	originalName String
+	filename     String
+	mimetype     String
+	size         Int
+	path         String
+	url          String
+	uploadedById String
+	uploadedBy   Account @relation(fields: [uploadedById], references: [id])
+	width        Int?
+	height       Int?
+	deleted      Boolean @default(false)
+	archived     Boolean @default(false)
+	createdAt    DateTime @default(now())
+	updatedAt    DateTime @updatedAt
+
+	@@index([uploadedById])
+	@@map("media")
+}
