@@ -1,0 +1,194 @@
+generator client {
+	provider = "prisma-client-js"
+	output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+	provider = "mysql"
+}
+
+model Author {
+	id        String   @id @default(uuid())
+	code      String   @unique
+	name      String
+	email     String   @unique
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	books         Book[]
+	videos        Video[]
+	bookViews     BookView[]
+	videoViews    VideoView[]
+	bookComments  BookComment[]
+	videoComments VideoComment[]
+
+	@@map("authors")
+}
+
+model Book {
+	id          String   @id @default(uuid())
+	code        String   @unique
+	title       String
+	description String?
+	authorId    String
+	deleted     Boolean  @default(false)
+	archived    Boolean  @default(false)
+	createdAt   DateTime @default(now())
+	updatedAt   DateTime @updatedAt
+
+	author   Author        @relation(fields: [authorId], references: [id])
+	views    BookView[]
+	comments BookComment[]
+
+	@@index([authorId])
+	@@map("books")
+}
+
+model Video {
+	id          String   @id @default(uuid())
+	code        String   @unique
+	title       String
+	description String?
+	url         String
+	authorId    String
+	deleted     Boolean  @default(false)
+	archived    Boolean  @default(false)
+	createdAt   DateTime @default(now())
+	updatedAt   DateTime @updatedAt
+
+	author   Author         @relation(fields: [authorId], references: [id])
+	views    VideoView[]
+	comments VideoComment[]
+
+	@@index([authorId])
+	@@map("videos")
+}
+
+model BookView {
+	id        String   @id @default(uuid())
+	code      String   @unique
+	bookId    String
+	authorId  String
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	viewedAt  DateTime @default(now())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	book   Book   @relation(fields: [bookId], references: [id])
+	author Author @relation(fields: [authorId], references: [id])
+
+	@@index([bookId])
+	@@index([authorId])
+	@@map("book_views")
+}
+
+model VideoView {
+	id        String   @id @default(uuid())
+	code      String   @unique
+	videoId   String
+	authorId  String
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	viewedAt  DateTime @default(now())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	video  Video  @relation(fields: [videoId], references: [id])
+	author Author @relation(fields: [authorId], references: [id])
+
+	@@index([videoId])
+	@@index([authorId])
+	@@map("video_views")
+}
+
+model BookComment {
+	id        String   @id @default(uuid())
+	code      String   @unique
+	bookId    String
+	authorId  String
+	content   String
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	book   Book   @relation(fields: [bookId], references: [id])
+	author Author @relation(fields: [authorId], references: [id])
+
+	@@index([bookId])
+	@@index([authorId])
+	@@map("book_comments")
+}
+
+model VideoComment {
+	id        String   @id @default(uuid())
+	code      String   @unique
+	videoId   String
+	authorId  String
+	content   String
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	video  Video  @relation(fields: [videoId], references: [id])
+	author Author @relation(fields: [authorId], references: [id])
+
+	@@index([videoId])
+	@@index([authorId])
+	@@map("video_comments")
+}
+
+model Account {
+	id        String   @id @default(uuid())
+	username  String   @unique
+	email     String   @unique
+	password  String
+	role      String
+	firstName String
+	lastName  String
+	gender    String?
+	photo     String?
+	birthDate DateTime?
+	emailConfirmed Boolean @default(false)
+	lastLogin DateTime?
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	matricule String   @unique
+	phoneNumber String?
+	city      String?
+	region    String?
+	blocked   Boolean  @default(false)
+	lockedUntil DateTime?
+	notes     String?
+	deleted   Boolean  @default(false)
+	archived  Boolean  @default(false)
+
+	media Media[]
+
+	@@map("accounts")
+}
+
+model Media {
+	id           String   @id @default(uuid())
+	originalName String
+	filename     String
+	mimetype     String
+	size         Int
+	path         String
+	url          String
+	uploadedById String
+	uploadedBy   Account @relation(fields: [uploadedById], references: [id])
+	width        Int?
+	height       Int?
+	deleted      Boolean @default(false)
+	archived     Boolean @default(false)
+	createdAt    DateTime @default(now())
+	updatedAt    DateTime @updatedAt
+
+	@@index([uploadedById])
+	@@map("media")
+}
