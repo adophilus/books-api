@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 import { PrismaService } from 'src/prisma.service';
 import { I18nService } from 'nestjs-i18n';
 import { ALLOWED_MEDIA_TYPE, FilterMediaDto } from './upload.types';
@@ -13,7 +13,7 @@ import { createReadStream, existsSync } from 'fs';
 export class UploadService {
   backendUrl: string;
   constructor(private prisma: PrismaService, private i18n: I18nService) {
-    this.backendUrl = process.env.BACKEND_URL;
+    this.backendUrl = process.env.BACKEND_URL ?? 'http://localhost:3000';
   }
 
   async saveMedia(file: Express.Multer.File, uploadedById: string) {
