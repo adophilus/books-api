@@ -3,8 +3,13 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { apiReference } from "@scalar/nestjs-api-reference";
 import { AppModule } from "./app.module";
 
-async function bootstrap() {
+	async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
+
+	app.enableCors({
+		origin: ["http://localhost:4200"],
+		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	});
 
 	const config = new DocumentBuilder()
 		.setTitle("Book API")

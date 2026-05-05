@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -7,7 +8,7 @@ import { PaginatedResponse } from '../models/paginated.model';
 @Injectable({ providedIn: 'root' })
 export class VideoService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/videos';
+  private baseUrl = `${environment.apiBaseUrl}/videos`;
 
   create(dto: CreateVideo): Observable<Video> {
     return this.http.post<Video>(this.baseUrl, dto);

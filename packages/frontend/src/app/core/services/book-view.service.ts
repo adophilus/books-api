@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -7,7 +8,7 @@ import { PaginatedResponse } from '../models/paginated.model';
 @Injectable({ providedIn: 'root' })
 export class BookViewService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/book-views';
+  private baseUrl = `${environment.apiBaseUrl}/book-views`;
 
   create(dto: CreateBookView): Observable<BookView> {
     return this.http.post<BookView>(this.baseUrl, dto);

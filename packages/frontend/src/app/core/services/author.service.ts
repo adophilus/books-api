@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -19,7 +20,7 @@ export interface AuthorFilter {
 @Injectable({ providedIn: 'root' })
 export class AuthorService {
   private http = inject(HttpClient);
-  private baseUrl = '/api/authors';
+  private baseUrl = `${environment.apiBaseUrl}/authors`;
 
   selectMany(filter: AuthorFilter = {}): Observable<PaginatedResponse<Author>> {
     let params = new HttpParams();
