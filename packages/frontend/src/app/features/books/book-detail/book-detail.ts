@@ -6,7 +6,6 @@ import { BookService } from '../../../core/services/book.service';
 import { AuthorService } from '../../../core/services/author.service';
 import { BookViewService } from '../../../core/services/book-view.service';
 import { BookCommentService } from '../../../core/services/book-comment.service';
-import { CurrentAuthorService } from '../../../core/services/current-author.service';
 import { Book } from '../../../core/models/book.model';
 import { BookComment } from '../../../core/models/book-comment.model';
 
@@ -22,7 +21,6 @@ export class BookDetail implements OnInit {
   private authorService = inject(AuthorService);
   private bookViewService = inject(BookViewService);
   private bookCommentService = inject(BookCommentService);
-  private currentAuthorService = inject(CurrentAuthorService);
 
   book = signal<Book | null>(null);
   authorName = signal('');
@@ -75,11 +73,7 @@ export class BookDetail implements OnInit {
   }
 
   registerView() {
-    const authorId = this.currentAuthorService.authorId();
-    if (!authorId) {
-      alert('Please select an author first');
-      return;
-    }
+    const authorId = this.book()!.authorId;
     this.bookViewService.create({ bookId: this.book()!.id, authorId }).subscribe();
   }
 
@@ -105,17 +99,12 @@ export class BookDetail implements OnInit {
   }
 
   addComment() {
-    const authorId = this.currentAuthorService.authorId();
-    if (!authorId) {
-      alert('Please select an author first');
-      return;
-    }
     if (!this.newComment().trim()) return;
     this.submittingComment.set(true);
     this.bookCommentService
       .create({
         bookId: this.book()!.id,
-        authorId,
+        authorId: this.book()!.authorId,
         content: this.newComment(),
       })
       .subscribe({

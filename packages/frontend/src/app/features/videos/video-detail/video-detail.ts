@@ -6,7 +6,6 @@ import { VideoService } from '../../../core/services/video.service';
 import { AuthorService } from '../../../core/services/author.service';
 import { VideoViewService } from '../../../core/services/video-view.service';
 import { VideoCommentService } from '../../../core/services/video-comment.service';
-import { CurrentAuthorService } from '../../../core/services/current-author.service';
 import { Video } from '../../../core/models/video.model';
 import { VideoComment } from '../../../core/models/video-comment.model';
 import { Author } from '../../../core/models/author.model';
@@ -23,7 +22,6 @@ export class VideoDetail implements OnInit {
   private authorService = inject(AuthorService);
   private videoViewService = inject(VideoViewService);
   private videoCommentService = inject(VideoCommentService);
-  private currentAuthorService = inject(CurrentAuthorService);
 
   video = signal<Video | null>(null);
   authorName = signal('');
@@ -75,8 +73,7 @@ export class VideoDetail implements OnInit {
   }
 
   registerView() {
-    const authorId = this.currentAuthorService.authorId();
-    if (!authorId) { alert('Please select an author first'); return; }
+    const authorId = this.video()!.authorId;
     this.videoViewService.create({ videoId: this.video()!.id, authorId }).subscribe();
   }
 
@@ -101,13 +98,11 @@ export class VideoDetail implements OnInit {
   }
 
   addComment() {
-    const authorId = this.currentAuthorService.authorId();
-    if (!authorId) { alert('Please select an author first'); return; }
     if (!this.newComment().trim()) return;
     this.submittingComment.set(true);
     this.videoCommentService.create({
       videoId: this.video()!.id,
-      authorId,
+      authorId: this.video()!.authorId,
       content: this.newComment(),
     }).subscribe({
       next: () => {
