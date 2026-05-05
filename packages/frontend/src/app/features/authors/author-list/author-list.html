@@ -14,11 +14,34 @@
   @if (showCreateForm()) {
     <div class="bg-white rounded-xl border border-gray-200 p-6">
       <h3 class="text-lg font-semibold text-gray-900 mb-4">New Author</h3>
-      <form (ngSubmit)="createAuthor()" class="flex flex-col sm:flex-row gap-3">
-        <input [(ngModel)]="newName" name="name" placeholder="Name" required
-               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-        <input [(ngModel)]="newEmail" name="email" type="email" placeholder="Email" required
-               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+      <form #authorForm="ngForm" (ngSubmit)="createAuthor(authorForm)" class="flex flex-col sm:flex-row gap-3">
+        <div class="flex-1">
+          <input [(ngModel)]="newName" name="name" #nameField="ngModel" placeholder="Name" required
+                 [class.border-red-500]="nameField.invalid && (nameField.dirty || nameField.touched || submitted())"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+          @if (nameField.invalid && (nameField.dirty || nameField.touched || submitted())) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (nameField.hasError('required')) {
+                Name is required.
+              }
+            </p>
+          }
+        </div>
+        <div class="flex-1">
+          <input [(ngModel)]="newEmail" name="email" #emailField="ngModel" type="email" placeholder="Email" required
+                 [class.border-red-500]="emailField.invalid && (emailField.dirty || emailField.touched || submitted())"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+          @if (emailField.invalid && (emailField.dirty || emailField.touched || submitted())) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (emailField.hasError('required')) {
+                Email is required.
+              }
+              @if (emailField.hasError('email')) {
+                Please enter a valid email.
+              }
+            </p>
+          }
+        </div>
         <button type="submit" [disabled]="creating()"
                 class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm font-medium">
           @if (creating()) { Creating... } @else { Create }

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BookService } from '../../../core/services/book.service';
 import { AuthorService } from '../../../core/services/author.service';
@@ -31,6 +31,7 @@ export class BookList implements OnInit {
   newDescription = signal('');
   newAuthorId = signal('');
   creating = signal(false);
+  submitted = signal(false);
 
   ngOnInit() {
     this.loadBooks();
@@ -68,8 +69,9 @@ export class BookList implements OnInit {
     this.loadBooks();
   }
 
-  createBook() {
-    if (!this.newTitle() || !this.newAuthorId()) return;
+  createBook(form: NgForm) {
+    this.submitted.set(true);
+    if (form.invalid) return;
     this.creating.set(true);
     this.bookService
       .create({
@@ -84,6 +86,7 @@ export class BookList implements OnInit {
           this.newAuthorId.set('');
           this.showCreateForm.set(false);
           this.creating.set(false);
+          this.submitted.set(false);
           this.loadBooks();
         },
         error: () => this.creating.set(false),

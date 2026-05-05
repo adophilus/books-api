@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { VideoService } from '../../../core/services/video.service';
 import { AuthorService } from '../../../core/services/author.service';
@@ -32,6 +32,7 @@ export class VideoList implements OnInit {
   newUrl = signal('');
   newAuthorId = signal('');
   creating = signal(false);
+  submitted = signal(false);
 
   ngOnInit() {
     this.loadVideos();
@@ -67,8 +68,9 @@ export class VideoList implements OnInit {
     this.loadVideos();
   }
 
-  createVideo() {
-    if (!this.newTitle() || !this.newUrl() || !this.newAuthorId()) return;
+  createVideo(form: NgForm) {
+    this.submitted.set(true);
+    if (form.invalid) return;
     this.creating.set(true);
     this.videoService.create({
       title: this.newTitle(),
@@ -83,6 +85,7 @@ export class VideoList implements OnInit {
         this.newAuthorId.set('');
         this.showCreateForm.set(false);
         this.creating.set(false);
+        this.submitted.set(false);
         this.loadVideos();
       },
       error: () => this.creating.set(false),

@@ -14,18 +14,40 @@
   @if (showCreateForm()) {
     <div class="bg-white rounded-xl border border-gray-200 p-6">
       <h3 class="text-lg font-semibold text-gray-900 mb-4">New Book</h3>
-      <form (ngSubmit)="createBook()" class="space-y-3">
-        <input [(ngModel)]="newTitle" name="title" placeholder="Title *" required
-               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+      <form #bookForm="ngForm" (ngSubmit)="createBook(bookForm)" class="space-y-3">
+        <div>
+          <input [(ngModel)]="newTitle" name="title" placeholder="Title *" required
+                 #titleField="ngModel"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                 [class.border-red-500]="titleField.invalid && (titleField.dirty || titleField.touched || submitted())">
+          @if (titleField.invalid && (titleField.dirty || titleField.touched || submitted())) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (titleField.hasError('required')) {
+                Title is required.
+              }
+            </p>
+          }
+        </div>
         <textarea [(ngModel)]="newDescription" name="description" placeholder="Description (optional)" rows="2"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none"></textarea>
-        <select [(ngModel)]="newAuthorId" name="authorId" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
-          <option value="">Select author *</option>
-          @for (author of authors(); track author.id) {
-            <option [value]="author.id">{{ author.name }}</option>
+        <div>
+          <select [(ngModel)]="newAuthorId" name="authorId" required
+                  #authorIdField="ngModel"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                  [class.border-red-500]="authorIdField.invalid && (authorIdField.dirty || authorIdField.touched || submitted())">
+            <option value="">Select author *</option>
+            @for (author of authors(); track author.id) {
+              <option [value]="author.id">{{ author.name }}</option>
+            }
+          </select>
+          @if (authorIdField.invalid && (authorIdField.dirty || authorIdField.touched || submitted())) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (authorIdField.hasError('required')) {
+                Author is required.
+              }
+            </p>
           }
-        </select>
+        </div>
         <button type="submit" [disabled]="creating()"
                 class="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors text-sm font-medium">
           @if (creating()) { Creating... } @else { Create }

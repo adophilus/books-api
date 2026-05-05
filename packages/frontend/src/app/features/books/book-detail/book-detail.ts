@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BookService } from '../../../core/services/book.service';
 import { AuthorService } from '../../../core/services/author.service';
@@ -34,6 +34,7 @@ export class BookDetail implements OnInit {
 
   newComment = signal('');
   submittingComment = signal(false);
+  commentSubmitted = signal(false);
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id')!;
@@ -98,8 +99,9 @@ export class BookDetail implements OnInit {
     });
   }
 
-  addComment() {
-    if (!this.newComment().trim()) return;
+  addComment(form: NgForm) {
+    this.commentSubmitted.set(true);
+    if (form.invalid) return;
     this.submittingComment.set(true);
     this.bookCommentService
       .create({
@@ -110,6 +112,7 @@ export class BookDetail implements OnInit {
       .subscribe({
         next: () => {
           this.newComment.set('');
+          this.commentSubmitted.set(false);
           this.submittingComment.set(false);
           this.loadComments(this.book()!.id);
         },

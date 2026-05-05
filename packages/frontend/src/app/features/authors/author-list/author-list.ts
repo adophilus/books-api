@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { AuthorService } from '../../../core/services/author.service';
 import { Author } from '../../../core/models/author.model';
 import { PaginatedResponse } from '../../../core/models/paginated.model';
@@ -24,6 +24,7 @@ export class AuthorList implements OnInit {
   newName = signal('');
   newEmail = signal('');
   creating = signal(false);
+  submitted = signal(false);
 
   ngOnInit() {
     this.loadAuthors();
@@ -55,13 +56,15 @@ export class AuthorList implements OnInit {
     this.loadAuthors();
   }
 
-  createAuthor() {
-    if (!this.newName() || !this.newEmail()) return;
+  createAuthor(form: NgForm) {
+    this.submitted.set(true);
+    if (form.invalid) return;
     this.creating.set(true);
     this.authorService.create({ name: this.newName(), email: this.newEmail() }).subscribe({
       next: () => {
         this.newName.set('');
         this.newEmail.set('');
+        this.submitted.set(false);
         this.showCreateForm.set(false);
         this.creating.set(false);
         this.loadAuthors();

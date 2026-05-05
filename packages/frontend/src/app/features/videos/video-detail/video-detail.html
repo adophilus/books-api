@@ -57,9 +57,17 @@
     <div class="bg-white rounded-xl border border-gray-200 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-4">Comments ({{ comments().length }})</h2>
 
-      <form (ngSubmit)="addComment()" class="mb-6">
-        <textarea [(ngModel)]="newComment" name="comment" rows="2" placeholder="Write a comment..." required
+      <form #commentForm="ngForm" (ngSubmit)="addComment(commentForm)" class="mb-6">
+        <textarea [(ngModel)]="newComment" name="comment" #contentField="ngModel" rows="2" placeholder="Write a comment..." required
+                  [class.border-red-500]="contentField.invalid && (contentField.dirty || contentField.touched || commentSubmitted())"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none resize-none"></textarea>
+        @if (contentField.invalid && (contentField.dirty || contentField.touched || commentSubmitted())) {
+          <p class="mt-1 text-sm text-red-600">
+            @if (contentField.hasError('required')) {
+              Comment is required.
+            }
+          </p>
+        }
         <button type="submit" [disabled]="submittingComment()"
                 class="mt-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 disabled:opacity-50">
           @if (submittingComment()) { Posting... } @else { Post Comment }
