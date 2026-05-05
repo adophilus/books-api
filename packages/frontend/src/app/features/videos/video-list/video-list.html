@@ -1,0 +1,105 @@
+<div class="space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Videos</h1>
+      <p class="text-sm text-gray-500 mt-1">{{ total() }} total videos</p>
+    </div>
+    <button (click)="showCreateForm.update(v => !v)"
+            class="inline-flex items-center gap-2 bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors text-sm font-medium">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Add Video
+    </button>
+  </div>
+
+  @if (showCreateForm()) {
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">New Video</h3>
+      <form (ngSubmit)="createVideo()" class="space-y-3">
+        <input [(ngModel)]="newTitle" name="title" placeholder="Title *" required
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+        <textarea [(ngModel)]="newDescription" name="description" placeholder="Description (optional)" rows="2"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none resize-none"></textarea>
+        <input [(ngModel)]="newUrl" name="url" type="url" placeholder="Video URL *" required
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+        <select [(ngModel)]="newAuthorId" name="authorId" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+          <option value="">Select author *</option>
+          @for (author of authors(); track author.id) {
+            <option [value]="author.id">{{ author.name }}</option>
+          }
+        </select>
+        <button type="submit" [disabled]="creating()"
+                class="bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700 disabled:opacity-50 transition-colors text-sm font-medium">
+          @if (creating()) { Creating... } @else { Create }
+        </button>
+      </form>
+    </div>
+  }
+
+  <div class="bg-white rounded-xl border border-gray-200">
+    <div class="p-4 border-b border-gray-200 flex flex-col sm:flex-row gap-3">
+      <input [ngModel]="search()" (ngModelChange)="search.set($event); onSearch()"
+             placeholder="Search videos..."
+             class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+      <select [ngModel]="filterAuthorId()" (ngModelChange)="filterAuthorId.set($event); onSearch()"
+              class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+        <option value="">All authors</option>
+        @for (author of authors(); track author.id) {
+          <option [value]="author.id">{{ author.name }}</option>
+        }
+      </select>
+    </div>
+
+    @if (loading()) {
+      <div class="flex items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+      </div>
+    } @else if (videos().length === 0) {
+      <div class="text-center py-12 text-gray-500">
+        <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <p>No videos found</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        @for (video of videos(); track video.id) {
+          <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md hover:border-amber-200 transition-all flex flex-col">
+            <a [routerLink]="['/videos', video.id]" class="flex-1 p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <h3 class="font-semibold text-gray-900 line-clamp-1">{{ video.title }}</h3>
+              </div>
+              @if (video.description) {
+                <p class="text-sm text-gray-500 line-clamp-2 mb-2">{{ video.description }}</p>
+              }
+              <p class="text-xs text-gray-400">by {{ getAuthorName(video.authorId) }}</p>
+            </a>
+            <div class="flex items-center justify-between px-4 py-2 border-t border-gray-100 bg-gray-50">
+              <span class="text-xs text-gray-400">{{ video.createdAt | date:'mediumDate' }}</span>
+              <button (click)="deleteVideo(video.id)" class="text-gray-400 hover:text-red-500 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (totalPages() > 1) {
+        <div class="flex items-center justify-between border-t border-gray-200 px-4 py-3">
+          <button (click)="setPage(page() - 1)" [disabled]="page() <= 1"
+                  class="text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+          <div class="flex gap-1">
+            @for (p of pages(); track p) {
+              <button (click)="setPage(p)"
+                      [class.bg-amber-600]="p === page()"
+                      [class.text-white]="p === page()"
+                      [class.text-gray-600]="p !== page()"
+                      class="px-3 py-1 rounded text-sm hover:bg-gray-100 transition-colors">{{ p }}</button>
+            }
+          </div>
+          <button (click)="setPage(page() + 1)" [disabled]="page() >= totalPages()"
+                  class="text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+        </div>
+      }
+    }
+  </div>
+</div>
