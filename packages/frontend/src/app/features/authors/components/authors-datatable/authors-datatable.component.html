@@ -1,0 +1,15 @@
+<app-generic-datatable
+  [items]="items"
+  [columns]="datatableColumns"
+  [isLoading]="isLoading"
+  [hasError]="hasError"
+  [showCreateButton]="true"
+  emptyIcon="fas fa-users"
+  emptyTitle="No authors found"
+  emptySubtitle="Add the first author"
+  createLabel="Add Author"
+  (create)="handleCreate()"
+  (view)="handleView($event)"
+  (update)="handleUpdate($event)"
+  (delete)="handleDelete($event)"
+></app-generic-datatable>

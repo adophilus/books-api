@@ -1,0 +1,17 @@
+{
+  "general": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "ok": "OK",
+    "confirm": "Confirmer",
+    "paginator": {
+      "previous": "Précédent",
+      "next": "Suivant"
+    }
+  },
+  "genericError": "Une erreur est survenue lors du chargement des données.",
+  "formErrors": {
+    "unknownFieldType": "Type de champ inconnu"
+  }
+}

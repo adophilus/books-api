@@ -1,0 +1,52 @@
+{
+  "authorForm": {
+    "name": "Nom",
+    "email": "Email",
+    "bio": "Biographie"
+  },
+  "authors": {
+    "delete": {
+      "title": "Supprimer l'auteur",
+      "message": "Voulez-vous vraiment supprimer {{name}} ?",
+      "success": {
+        "title": "Auteur supprimé",
+        "message": "{{name}} a été supprimé avec succès."
+      },
+      "error": {
+        "title": "Échec de la suppression",
+        "message": "Impossible de supprimer l'auteur."
+      }
+    },
+    "create": {
+      "success": {
+        "title": "Auteur créé",
+        "message": "{{name}} a été créé avec succès."
+      },
+      "error": {
+        "title": "Échec de la création",
+        "message": "Impossible de créer l'auteur."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Auteur mis à jour",
+        "message": "{{name}} a été mis à jour avec succès."
+      },
+      "error": {
+        "title": "Échec de la mise à jour",
+        "message": "Impossible de mettre à jour l'auteur."
+      }
+    }
+  },
+  "formErrors": {
+    "authorForm": {
+      "name": {
+        "required": "Le nom est obligatoire."
+      },
+      "email": {
+        "required": "L'email est obligatoire.",
+        "email": "Veuillez entrer un email valide."
+      }
+    }
+  }
+}

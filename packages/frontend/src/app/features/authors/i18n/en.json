@@ -1,0 +1,52 @@
+{
+  "authorForm": {
+    "name": "Name",
+    "email": "Email",
+    "bio": "Bio"
+  },
+  "authors": {
+    "delete": {
+      "title": "Delete Author",
+      "message": "Are you sure you want to delete {{name}}?",
+      "success": {
+        "title": "Author Deleted",
+        "message": "{{name}} has been deleted successfully."
+      },
+      "error": {
+        "title": "Delete Failed",
+        "message": "Failed to delete the author."
+      }
+    },
+    "create": {
+      "success": {
+        "title": "Author Created",
+        "message": "{{name}} has been created successfully."
+      },
+      "error": {
+        "title": "Creation Failed",
+        "message": "Failed to create the author."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Author Updated",
+        "message": "{{name}} has been updated successfully."
+      },
+      "error": {
+        "title": "Update Failed",
+        "message": "Failed to update the author."
+      }
+    }
+  },
+  "formErrors": {
+    "authorForm": {
+      "name": {
+        "required": "Name is required."
+      },
+      "email": {
+        "required": "Email is required.",
+        "email": "Please enter a valid email."
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "general": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "ok": "OK",
+    "confirm": "Confirm",
+    "paginator": {
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "genericError": "An error occurred while loading data.",
+  "formErrors": {
+    "unknownFieldType": "Unknown field type"
+  }
+}
