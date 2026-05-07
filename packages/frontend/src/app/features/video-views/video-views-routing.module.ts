@@ -1,11 +1,15 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
+import { VideoViewsListPageComponent } from "./pages/video-views-list-page/video-views-list-page.component";
+import { VideoViewsCreatePageComponent } from "./pages/video-views-create-page/video-views-create-page.component";
+import { VideoViewsUpdatePageComponent } from "./pages/video-views-update-page/video-views-update-page.component";
+import { VideoViewsDetailsPageComponent } from "./pages/video-views-details-page/video-views-details-page.component";
 
 const routes: Routes = [
-  { path: "", loadComponent: () => import("./pages/video-views-list-page/video-views-list-page.component").then(m => m.VideoViewsListPageComponent) },
-  { path: "create", loadComponent: () => import("./pages/video-views-create-page/video-views-create-page.component").then(m => m.VideoViewsCreatePageComponent) },
-  { path: ":id/update", loadComponent: () => import("./pages/video-views-update-page/video-views-update-page.component").then(m => m.VideoViewsUpdatePageComponent) },
-  { path: ":id", loadComponent: () => import("./pages/video-views-details-page/video-views-details-page.component").then(m => m.VideoViewsDetailsPageComponent) },
+  { path: "", component: VideoViewsListPageComponent },
+  { path: "create", component: VideoViewsCreatePageComponent },
+  { path: ":id/update", component: VideoViewsUpdatePageComponent },
+  { path: ":id", component: VideoViewsDetailsPageComponent },
 ];
 
 @NgModule({

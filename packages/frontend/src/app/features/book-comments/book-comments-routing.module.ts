@@ -1,11 +1,15 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
+import { BookCommentsListPageComponent } from "./pages/book-comments-list-page/book-comments-list-page.component";
+import { BookCommentsCreatePageComponent } from "./pages/book-comments-create-page/book-comments-create-page.component";
+import { BookCommentsUpdatePageComponent } from "./pages/book-comments-update-page/book-comments-update-page.component";
+import { BookCommentsDetailsPageComponent } from "./pages/book-comments-details-page/book-comments-details-page.component";
 
 const routes: Routes = [
-  { path: "", loadComponent: () => import("./pages/book-comments-list-page/book-comments-list-page.component").then(m => m.BookCommentsListPageComponent) },
-  { path: "create", loadComponent: () => import("./pages/book-comments-create-page/book-comments-create-page.component").then(m => m.BookCommentsCreatePageComponent) },
-  { path: ":id/update", loadComponent: () => import("./pages/book-comments-update-page/book-comments-update-page.component").then(m => m.BookCommentsUpdatePageComponent) },
-  { path: ":id", loadComponent: () => import("./pages/book-comments-details-page/book-comments-details-page.component").then(m => m.BookCommentsDetailsPageComponent) },
+  { path: "", component: BookCommentsListPageComponent },
+  { path: "create", component: BookCommentsCreatePageComponent },
+  { path: ":id/update", component: BookCommentsUpdatePageComponent },
+  { path: ":id", component: BookCommentsDetailsPageComponent },
 ];
 
 @NgModule({

@@ -1,13 +1,19 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
+import { VideosListPageComponent } from "./pages/videos-list-page/videos-list-page.component";
+import { VideosCreatePageComponent } from "./pages/videos-create-page/videos-create-page.component";
+import { VideosUpdatePageComponent } from "./pages/videos-update-page/videos-update-page.component";
+import { VideosDetailsPageComponent } from "./pages/videos-details-page/videos-details-page.component";
+import { VideoViewsListPageComponent } from "../video-views/pages/video-views-list-page/video-views-list-page.component";
+import { VideoCommentsListPageComponent } from "../video-comments/pages/video-comments-list-page/video-comments-list-page.component";
 
 const routes: Routes = [
-  { path: "", loadComponent: () => import("./pages/videos-list-page/videos-list-page.component").then(m => m.VideosListPageComponent) },
-  { path: "create", loadComponent: () => import("./pages/videos-create-page/videos-create-page.component").then(m => m.VideosCreatePageComponent) },
-  { path: ":id/update", loadComponent: () => import("./pages/videos-update-page/videos-update-page.component").then(m => m.VideosUpdatePageComponent) },
-  { path: ":id/views", loadComponent: () => import("../video-views/pages/video-views-list-page/video-views-list-page.component").then(m => m.VideoViewsListPageComponent) },
-  { path: ":id/comments", loadComponent: () => import("../video-comments/pages/video-comments-list-page/video-comments-list-page.component").then(m => m.VideoCommentsListPageComponent) },
-  { path: ":id", loadComponent: () => import("./pages/videos-details-page/videos-details-page.component").then(m => m.VideosDetailsPageComponent) },
+  { path: "", component: VideosListPageComponent },
+  { path: "create", component: VideosCreatePageComponent },
+  { path: ":id/update", component: VideosUpdatePageComponent },
+  { path: ":id/views", component: VideoViewsListPageComponent },
+  { path: ":id/comments", component: VideoCommentsListPageComponent },
+  { path: ":id", component: VideosDetailsPageComponent },
 ];
 
 @NgModule({

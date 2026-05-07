@@ -8,8 +8,8 @@
   emptyTitle="No authors found"
   emptySubtitle="Add the first author"
   createLabel="Add Author"
-  (create)="handleCreate()"
-  (view)="handleView($event)"
-  (update)="handleUpdate($event)"
-  (delete)="handleDelete($event)"
+  (create)="create.emit()"
+  (view)="view.emit($event)"
+  (update)="update.emit($event)"
+  (delete)="delete.emit($event)"
 ></app-generic-datatable>

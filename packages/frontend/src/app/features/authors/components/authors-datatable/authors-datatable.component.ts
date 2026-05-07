@@ -10,23 +10,14 @@ import { DatatableColumns } from "../../authors.config";
   templateUrl: "./authors-datatable.component.html",
 })
 export class AuthorsDatatableComponent {
-  datatableColumns: GenericDatatableColumnDef<Author>[] = [];
+  datatableColumns: GenericDatatableColumnDef<Author>[] = DatatableColumns;
 
   @Input() items: Author[] = [];
   @Input() isLoading = false;
   @Input() hasError = false;
 
-  @Output("view") handleView$ = new EventEmitter<Author>();
-  @Output("update") handleUpdate$ = new EventEmitter<Author>();
-  @Output("delete") handleDelete$ = new EventEmitter<Author>();
-  @Output("create") handleCreate$ = new EventEmitter<void>();
-
-  ngOnInit(): void {
-    this.datatableColumns = DatatableColumns;
-  }
-
-  handleView(item: Author) { this.handleView$.emit(item); }
-  handleUpdate(item: Author) { this.handleUpdate$.emit(item); }
-  handleDelete(item: Author) { this.handleDelete$.emit(item); }
-  handleCreate() { this.handleCreate$.emit(); }
+  @Output() create = new EventEmitter<void>();
+  @Output() view = new EventEmitter<Author>();
+  @Output() update = new EventEmitter<Author>();
+  @Output() delete = new EventEmitter<Author>();
 }
