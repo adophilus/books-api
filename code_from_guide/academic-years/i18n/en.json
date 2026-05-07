@@ -1,0 +1,22 @@
+{
+  "academicYearForm": {
+    "year": "Academic year",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "schoolId": "School",
+    "isCurrent": "Current academic year"
+  },
+  "formErrors": {
+    "academicYearForm": {
+      "year": {
+        "required": "The academic year is required."
+      },
+      "startDate": {
+        "required": "The start date is required."
+      },
+      "endDate": {
+        "required": "The end date is required."
+      }
+    }
+  }
+}

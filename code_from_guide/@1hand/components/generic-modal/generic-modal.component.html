@@ -1,0 +1,31 @@
+<h2 mat-dialog-title *ngIf="data.title" class="text-lg font-semibold">
+  {{ data.title }}
+</h2>
+
+<mat-dialog-content
+  class="py-4 !px-8"
+  [ngClass]="{ '!text-red-500': isErrorType }"
+>
+  <div *ngIf="data.content">{{ data.content }}</div>
+  <div *ngIf="data.html" [innerHTML]="data.html"></div>
+  <ng-container *ngIf="data.template">
+    <div>
+      <ng-container *ngTemplateOutlet="data.template"></ng-container>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" *ngIf="data.actions?.length">
+  <div class="flex justify-end gap-2 pt-4" *ngIf="data.actions?.length">
+    <button
+      [disabled]="isLoading"
+      *ngFor="let action of data.actions"
+      (click)="close(action.id)"
+      [ngClass]="getButtonClass(action.color)"
+      class="px-4 py-2 font-medium rounded-md shadow-sm transition"
+    >
+      <span *ngIf="action.isLoading">...</span>
+      <span *ngIf="!action.isLoading">{{ action.label }}</span>
+    </button>
+  </div>
+</mat-dialog-actions>

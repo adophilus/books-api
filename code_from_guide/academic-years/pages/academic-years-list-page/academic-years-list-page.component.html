@@ -1,0 +1,102 @@
+<div>
+  <!-- Titre et barre d'action -->
+  <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold mb-4 md:mb-0">
+      <i class="fas fa-users mr-2 text-blue-500"></i> Liste des années
+      academiques
+    </h1>
+    <button
+      [routerLink]="['../create']"
+      class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-700 text-sm"
+    >
+      <i class="fa fa-plus mr-2"></i> Ajouter
+    </button>
+  </div>
+
+  <!-- Filtres -->
+  <!-- <div
+    class="bg-white p-4 rounded shadow mb-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 text-sm"
+  >
+    <input
+      type="text"
+      placeholder="Nom ou prénom"
+      class="border p-2 rounded w-full"
+    />
+    <input
+      type="text"
+      placeholder="Matricule"
+      class="border p-2 rounded w-full"
+    />
+    <select class="border p-2 rounded w-full">
+      <option value="">Classe</option>
+      <option>6e A</option>
+      <option>4e B</option>
+      <option>Terminale C</option>
+    </select>
+    <select class="border p-2 rounded w-full">
+      <option value="">Sexe</option>
+      <option>Masculin</option>
+      <option>Féminin</option>
+    </select>
+    <select class="border p-2 rounded w-full">
+      <option value="">Nationalité</option>
+      <option>Camerounaise</option>
+      <option>Congolaise</option>
+      <option>Tchadienne</option>
+    </select>
+    <select class="border p-2 rounded w-full">
+      <option value="">Année scolaire</option>
+      <option>2023/2024</option>
+      <option>2024/2025</option>
+      <option>2025/2026</option>
+    </select>
+    <div class="flex gap-2 col-span-full md:col-span-1">
+      <button class="bg-gray-100 px-4 py-2 rounded border text-sm w-full">
+        Réinitialiser
+      </button>
+      <button class="bg-blue-500 text-white px-4 py-2 rounded text-sm w-full">
+        Filtrer
+      </button>
+    </div>
+  </div> -->
+
+  <!-- Tableau -->
+  <div>
+    <div *ngIf="isLoading" class="grid grid-rows-[1fr] h-[400px]">
+      <div class="w-full text-center h-full">
+        <app-loader></app-loader>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && hasError" class="w-full">
+      <app-generic-error
+        *ngIf="hasError"
+        [message]="errorMessage"
+      ></app-generic-error>
+    </div>
+
+    <div *ngIf="!isLoading && !hasError" class="max-w-full w-full">
+      <app-academic-years-datatable
+        [items]="items"
+        [isLoading]="false"
+        [hasError]="false"
+        (create)="handleCreate()"
+        (view)="handleView($event)"
+        (update)="handleUpdate($event)"
+        (delete)="handleDelete($event)"
+      ></app-academic-years-datatable>
+    </div>
+
+    <div class="flex justify-end mb-4">
+      <app-generic-paginator
+        [currentPage]="page"
+        [totalPages]="totalPages"
+        [maxVisible]="5"
+        [totalPages]="totalPages"
+        (pageChange)="onPageChange($event)"
+      ></app-generic-paginator>
+    </div>
+  </div>
+
+  <!-- Tableau des élèves -->
+</div>

@@ -1,0 +1,29 @@
+{
+  "bookForm": {
+    "title": "Title",
+    "description": "Description",
+    "author": "Author ID"
+  },
+  "books": {
+    "delete": {
+      "title": "Delete Book",
+      "message": "Are you sure you want to delete {{name}}?",
+      "success": { "title": "Book Deleted", "message": "{{name}} has been deleted successfully." },
+      "error": { "title": "Delete Failed", "message": "Failed to delete the book." }
+    },
+    "create": {
+      "success": { "title": "Book Created", "message": "{{name}} has been created successfully." },
+      "error": { "title": "Creation Failed", "message": "Failed to create the book." }
+    },
+    "update": {
+      "success": { "title": "Book Updated", "message": "{{name}} has been updated successfully." },
+      "error": { "title": "Update Failed", "message": "Failed to update the book." }
+    }
+  },
+  "formErrors": {
+    "bookForm": {
+      "title": { "required": "Title is required." },
+      "author": { "required": "Author is required." }
+    }
+  }
+}

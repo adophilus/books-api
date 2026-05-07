@@ -1,0 +1,15 @@
+<app-generic-datatable
+  [items]="items"
+  [columns]="datatableColumns"
+  [isLoading]="isLoading"
+  [hasError]="hasError"
+  [showCreateButton]="true"
+  emptyIcon="fas fa-book"
+  emptyTitle="No books found"
+  emptySubtitle="Add the first book"
+  createLabel="Add Book"
+  (create)="create.emit()"
+  (view)="view.emit($event)"
+  (update)="update.emit($event)"
+  (delete)="delete.emit($event)"
+></app-generic-datatable>

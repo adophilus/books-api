@@ -1,0 +1,31 @@
+{
+  "videoForm": {
+    "title": "Titre",
+    "url": "URL de la vidéo",
+    "description": "Description",
+    "author": "ID de l'auteur"
+  },
+  "videos": {
+    "delete": {
+      "title": "Supprimer la vidéo",
+      "message": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
+      "success": { "title": "Vidéo supprimée", "message": "{{name}} a été supprimée avec succès." },
+      "error": { "title": "Échec de la suppression", "message": "Impossible de supprimer la vidéo." }
+    },
+    "create": {
+      "success": { "title": "Vidéo créée", "message": "{{name}} a été créée avec succès." },
+      "error": { "title": "Échec de la création", "message": "Impossible de créer la vidéo." }
+    },
+    "update": {
+      "success": { "title": "Vidéo mise à jour", "message": "{{name}} a été mise à jour avec succès." },
+      "error": { "title": "Échec de la mise à jour", "message": "Impossible de mettre à jour la vidéo." }
+    }
+  },
+  "formErrors": {
+    "videoForm": {
+      "title": { "required": "Le titre est requis." },
+      "url": { "required": "L'URL est requise." },
+      "author": { "required": "L'auteur est requis." }
+    }
+  }
+}

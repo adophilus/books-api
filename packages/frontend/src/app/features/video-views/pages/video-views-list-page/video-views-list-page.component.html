@@ -1,0 +1,39 @@
+<div>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">
+      <i class="fas fa-eye mr-2 text-indigo-500"></i> Video Views
+    </h1>
+  </div>
+
+  @if (isLoading) {
+    <div class="flex items-center justify-center py-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+    </div>
+  }
+
+  @if (!isLoading && hasError) {
+    <app-generic-error [message]="errorMessage"></app-generic-error>
+  }
+
+  @if (!isLoading && !hasError) {
+    <app-video-views-datatable
+      [items]="items"
+      [isLoading]="false"
+      [hasError]="false"
+      (create)="handleCreate()"
+      (view)="handleView($event)"
+      (delete)="handleDelete($event)"
+    ></app-video-views-datatable>
+
+    <div class="flex justify-end mt-4">
+      <app-generic-paginator
+        [currentPage]="page"
+        [totalPages]="totalPages"
+        [maxVisible]="5"
+        [totalItems]="totalItems"
+        [itemsPerPage]="limit"
+        (pageChange)="onPageChange($event)"
+      ></app-generic-paginator>
+    </div>
+  }
+</div>

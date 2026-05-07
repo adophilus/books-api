@@ -1,0 +1,15 @@
+<app-generic-datatable
+  [items]="items"
+  [columns]="datatableColumns"
+  [isLoading]="isLoading"
+  [hasError]="hasError"
+  [showCreateButton]="true"
+  emptyIcon="fas fa-video"
+  emptyTitle="No videos found"
+  emptySubtitle="Add the first video"
+  createLabel="Add Video"
+  (create)="create.emit()"
+  (view)="view.emit($event)"
+  (update)="update.emit($event)"
+  (delete)="delete.emit($event)"
+></app-generic-datatable>

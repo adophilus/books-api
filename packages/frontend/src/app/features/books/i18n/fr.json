@@ -1,0 +1,29 @@
+{
+  "bookForm": {
+    "title": "Titre",
+    "description": "Description",
+    "author": "ID de l'auteur"
+  },
+  "books": {
+    "delete": {
+      "title": "Supprimer le livre",
+      "message": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
+      "success": { "title": "Livre supprimé", "message": "{{name}} a été supprimé avec succès." },
+      "error": { "title": "Échec de la suppression", "message": "Impossible de supprimer le livre." }
+    },
+    "create": {
+      "success": { "title": "Livre créé", "message": "{{name}} a été créé avec succès." },
+      "error": { "title": "Échec de la création", "message": "Impossible de créer le livre." }
+    },
+    "update": {
+      "success": { "title": "Livre mis à jour", "message": "{{name}} a été mis à jour avec succès." },
+      "error": { "title": "Échec de la mise à jour", "message": "Impossible de mettre à jour le livre." }
+    }
+  },
+  "formErrors": {
+    "bookForm": {
+      "title": { "required": "Le titre est requis." },
+      "author": { "required": "L'auteur est requis." }
+    }
+  }
+}

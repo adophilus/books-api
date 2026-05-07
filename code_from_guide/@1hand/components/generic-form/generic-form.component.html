@@ -1,0 +1,170 @@
+<form
+  *transloco="let t; read: transationNamespace"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  class="form-wrapper"
+>
+  <ng-container *transloco="let tCore">
+    <ng-container *ngFor="let fieldset of fieldsets | keyvalue">
+      <div class="form-grid">
+        <ng-container *ngFor="let field of fieldset.value">
+          <div [ngClass]="getFieldSizeClasses(field)" class="form-field">
+            <!-- Label avec * si requis -->
+            <label class="form-label" [attr.for]="field.name">
+              {{ t(field.label) }}
+              <span *ngIf="field.required" class="text-red-400 text-lg">*</span>
+            </label>
+
+            <ng-container [ngSwitch]="field.type">
+              <!-- Champ texte -->
+              <input
+                *ngSwitchCase="'string'"
+                type="text"
+                [formControlName]="field.name"
+                [id]="field.name"
+                [placeholder]="field.placeholder ? t(field.placeholder) : ''"
+                [disabled]="!!field.disabled"
+                class="form-input"
+                [class.form-input-error]="isFieldInvalid(field.name)"
+              />
+
+              <input
+                *ngSwitchCase="'email'"
+                type="email"
+                [formControlName]="field.name"
+                [id]="field.name"
+                [placeholder]="field.placeholder ? t(field.placeholder) : ''"
+                class="form-input"
+                [class.form-input-error]="isFieldInvalid(field.name)"
+              />
+
+              <ngx-intl-tel-input
+                *ngSwitchCase="'phone'"
+                [preferredCountries]="[
+                  CountryISO.UnitedStates,
+                  CountryISO.Cameroon
+                ]"
+                [enableAutoCountrySelect]="true"
+                [enablePlaceholder]="true"
+                [searchCountryFlag]="true"
+                [searchCountryField]="[SearchCountryField.Name]"
+                [selectFirstCountry]="false"
+                [selectedCountryISO]="CountryISO.Cameroon"
+                [phoneValidation]="true"
+                [separateDialCode]="true"
+                [formControl]="getFormControl(field.name)"
+                class="form-input"
+              ></ngx-intl-tel-input>
+
+              <!-- Mot de passe -->
+              <input
+                *ngSwitchCase="'password'"
+                type="password"
+                [formControlName]="field.name"
+                [id]="field.name"
+                [placeholder]="field.placeholder ? t(field.placeholder) : ''"
+                [disabled]="!!field.disabled"
+                class="form-input"
+                [class.form-input-error]="isFieldInvalid(field.name)"
+              />
+
+              <!-- Numérique -->
+              <input
+                *ngSwitchCase="'number'"
+                type="number"
+                [formControlName]="field.name"
+                [id]="field.name"
+                [placeholder]="field.placeholder ? t(field.placeholder) : ''"
+                [disabled]="!!field.disabled"
+                class="form-input"
+                [class.form-input-error]="isFieldInvalid(field.name)"
+              />
+
+              <!-- Liste déroulante -->
+              <select
+                *ngSwitchCase="'select'"
+                [formControlName]="field.name"
+                [id]="field.name"
+                [attr.multiple]="field.multiple ? '' : null"
+                [disabled]="!!field.disabled"
+                class="form-input"
+                [class.form-input-error]="isFieldInvalid(field.name)"
+              >
+                <option *ngIf="!!field.multiple" value="" disabled hidden>
+                  {{ t(field.placeholder || field.label) }}
+                </option>
+
+                <option
+                  *ngFor="let option of field.options"
+                  [value]="option.value"
+                >
+                  {{ t(option.label) }}
+                </option>
+              </select>
+
+              <!-- Autocomplete -->
+              <app-generic-autocomplete
+                *ngSwitchCase="'autocomplete'"
+                [formControl]="getFormControl(field.name)"
+                [items]="field.options || []"
+                [displayFn]="field.displayFn || defaultDisplayFn"
+                [placeholder]="field.placeholder ? t(field.placeholder) : ''"
+                [disabled]="!!field.disabled"
+              ></app-generic-autocomplete>
+
+              <!-- Date -->
+              <input
+                *ngSwitchCase="'date'"
+                type="date"
+                [formControlName]="field.name"
+                [id]="field.name"
+                [disabled]="!!field.disabled"
+                class="form-input"
+                [class.form-input-error]="isFieldInvalid(field.name)"
+              />
+
+              <!-- Fichier -->
+              <input
+                *ngSwitchCase="'file'"
+                type="file"
+                [id]="field.name"
+                (change)="onFileChange($event, field)"
+                [accept]="field.acceptedFileExtensions?.join(',')"
+                [multiple]="field.multiple"
+                class="form-input"
+              />
+
+              <app-generic-text-editor
+                *ngSwitchCase="'richtext'"
+                [formControl]="getFormControl(field.name)"
+                [placeholder]="field.placeholder ? t(field.placeholder) : ''"
+                [readOnly]="!!field.editorOptions?.readOnly"
+                [class.sticky-toolbar]="field.editorOptions?.toolbarSticky"
+                [style.--editor-min-height]="
+                  (field.editorOptions?.minHeight || 420) + 'px'
+                "
+              ></app-generic-text-editor>
+
+              <!-- Type inconnu -->
+              <div *ngSwitchDefault class="form-error">
+                {{ tCore("formErrors.unknownFieldType") }}
+              </div>
+            </ng-container>
+
+            <!-- Erreurs -->
+            <div *ngIf="isFieldInvalid(field.name)" class="form-error">
+              {{ t(getFirstErrorMessage(field)) }}
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <!-- Bouton d'action -->
+    <div class="form-actions" *ngIf="showActionButton">
+      <button [disabled]="isLoading" type="submit" class="btn app-primary">
+        {{ tCore("general.save") }} {{ isLoading ? "..." : "" }}
+      </button>
+    </div>
+  </ng-container>
+</form>

@@ -1,0 +1,14 @@
+<app-generic-datatable
+  [items]="items"
+  [columns]="datatableColumns"
+  [isLoading]="isLoading"
+  [hasError]="hasError"
+  [showCreateButton]="true"
+  emptyIcon="fas fa-eye"
+  emptyTitle="No book views found"
+  emptySubtitle="Record the first view"
+  createLabel="Add View"
+  (create)="create.emit()"
+  (view)="view.emit($event)"
+  (delete)="delete.emit($event)"
+></app-generic-datatable>

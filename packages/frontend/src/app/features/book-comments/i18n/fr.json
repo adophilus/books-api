@@ -1,0 +1,22 @@
+{
+  "bookCommentForm": { "book": "ID du livre", "author": "ID de l'auteur", "content": "Commentaire" },
+  "book-comments": {
+    "delete": {
+      "title": "Supprimer le commentaire",
+      "message": "Êtes-vous sûr de vouloir supprimer ce commentaire ?",
+      "success": { "title": "Commentaire supprimé", "message": "Le commentaire a été supprimé." },
+      "error": { "title": "Échec", "message": "Impossible de supprimer le commentaire." }
+    },
+    "create": {
+      "success": { "title": "Commentaire créé", "message": "Le commentaire a été créé." },
+      "error": { "title": "Échec", "message": "Impossible de créer le commentaire." }
+    },
+    "update": {
+      "success": { "title": "Commentaire mis à jour", "message": "Le commentaire a été mis à jour." },
+      "error": { "title": "Échec", "message": "Impossible de mettre à jour le commentaire." }
+    }
+  },
+  "formErrors": {
+    "bookCommentForm": { "book": { "required": "Le livre est requis." }, "author": { "required": "L'auteur est requis." }, "content": { "required": "Le contenu est requis." } }
+  }
+}

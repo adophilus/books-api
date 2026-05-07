@@ -1,0 +1,18 @@
+{
+  "videoViewForm": { "video": "Video ID", "author": "Author ID" },
+  "video-views": {
+    "delete": {
+      "title": "Delete Video View",
+      "message": "Are you sure you want to delete this video view?",
+      "success": { "title": "Video View Deleted", "message": "The video view has been deleted." },
+      "error": { "title": "Delete Failed", "message": "Failed to delete the video view." }
+    },
+    "create": {
+      "success": { "title": "View Recorded", "message": "Video view has been recorded." },
+      "error": { "title": "Creation Failed", "message": "Failed to record the video view." }
+    }
+  },
+  "formErrors": {
+    "videoViewForm": { "video": { "required": "Video is required." }, "author": { "required": "Author is required." } }
+  }
+}

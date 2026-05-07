@@ -1,0 +1,31 @@
+{
+  "videoForm": {
+    "title": "Title",
+    "url": "Video URL",
+    "description": "Description",
+    "author": "Author ID"
+  },
+  "videos": {
+    "delete": {
+      "title": "Delete Video",
+      "message": "Are you sure you want to delete {{name}}?",
+      "success": { "title": "Video Deleted", "message": "{{name}} has been deleted successfully." },
+      "error": { "title": "Delete Failed", "message": "Failed to delete the video." }
+    },
+    "create": {
+      "success": { "title": "Video Created", "message": "{{name}} has been created successfully." },
+      "error": { "title": "Creation Failed", "message": "Failed to create the video." }
+    },
+    "update": {
+      "success": { "title": "Video Updated", "message": "{{name}} has been updated successfully." },
+      "error": { "title": "Update Failed", "message": "Failed to update the video." }
+    }
+  },
+  "formErrors": {
+    "videoForm": {
+      "title": { "required": "Title is required." },
+      "url": { "required": "URL is required." },
+      "author": { "required": "Author is required." }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+<app-generic-datatable
+  [items]="items"
+  [columns]="datatableColumns"
+  [isLoading]="isLoading"
+  [hasError]="hasError"
+  [showCreateButton]="true"
+  emptyIcon="fas fa-comment"
+  emptyTitle="No comments found"
+  emptySubtitle="Add the first comment"
+  createLabel="Add Comment"
+  (create)="create.emit()"
+  (view)="view.emit($event)"
+  (update)="update.emit($event)"
+  (delete)="delete.emit($event)"
+></app-generic-datatable>

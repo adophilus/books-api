@@ -1,0 +1,31 @@
+<div>
+  <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold mb-4 md:mb-0 flex items-center">
+      <i class="fas fa-users mr-2 text-blue-500"></i> Ajouter une année
+      academique
+    </h1>
+  </div>
+
+  <!-- ✅ Informations sur la classe (statique : 6e B) -->
+  <!-- <div class="mb-6 p-4 rounded bg-blue-50">
+    <div class="text-lg font-semibold mb-2 flex items-center gap-2">
+      <i class="fas fa-chalkboard text-gray-600"></i>
+      6e B
+      <span
+        class="ml-2 px-2 py-1 text-xs rounded-full border border-blue-600 text-blue-700"
+      >
+        Sixième
+      </span>
+    </div>
+    <div class="text-sm text-gray-700">
+      <div><strong>Cycle :</strong> 1er Cycle (Collège)</div>
+      <div><strong>Effectif actuel :</strong> 30 élèves</div>
+    </div>
+  </div> -->
+
+  <!-- ✅ Formulaire d'inscription -->
+  <app-academic-years-form
+    [isLoading]="isLoading"
+    (onSubmit)="onSubmit($event)"
+  ></app-academic-years-form>
+</div>

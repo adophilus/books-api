@@ -1,0 +1,18 @@
+{
+  "videoViewForm": { "video": "ID de la vidéo", "author": "ID de l'auteur" },
+  "video-views": {
+    "delete": {
+      "title": "Supprimer la vue",
+      "message": "Êtes-vous sûr de vouloir supprimer cette vue ?",
+      "success": { "title": "Vue supprimée", "message": "La vue a été supprimée." },
+      "error": { "title": "Échec", "message": "Impossible de supprimer la vue." }
+    },
+    "create": {
+      "success": { "title": "Vue enregistrée", "message": "La vue a été enregistrée." },
+      "error": { "title": "Échec", "message": "Impossible d'enregistrer la vue." }
+    }
+  },
+  "formErrors": {
+    "videoViewForm": { "video": { "required": "La vidéo est requise." }, "author": { "required": "L'auteur est requis." } }
+  }
+}

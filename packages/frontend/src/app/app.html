@@ -30,20 +30,48 @@
              class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">
             Videos
           </a>
+          <a routerLink="/book-views"
+             routerLinkActive="bg-gray-100 text-gray-900"
+             class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Book Views
+          </a>
+          <a routerLink="/video-views"
+             routerLinkActive="bg-gray-100 text-gray-900"
+             class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Video Views
+          </a>
+          <a routerLink="/book-comments"
+             routerLinkActive="bg-gray-100 text-gray-900"
+             class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Book Comments
+          </a>
+          <a routerLink="/video-comments"
+             routerLinkActive="bg-gray-100 text-gray-900"
+             class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Video Comments
+          </a>
         </div>
       </div>
     </div>
 
     <!-- Mobile nav -->
-    <div class="sm:hidden flex space-x-1 pb-2 -mt-1 items-center">
+    <div class="sm:hidden flex space-x-1 pb-2 -mt-1 items-center overflow-x-auto">
       <a routerLink="/" routerLinkActive="bg-gray-100 text-gray-900" [routerLinkActiveOptions]="{exact: true}"
-         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium">Dashboard</a>
+         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">Dashboard</a>
       <a routerLink="/authors" routerLinkActive="bg-gray-100 text-gray-900"
-         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium">Authors</a>
+         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">Authors</a>
       <a routerLink="/books" routerLinkActive="bg-gray-100 text-gray-900"
-         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium">Books</a>
+         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">Books</a>
       <a routerLink="/videos" routerLinkActive="bg-gray-100 text-gray-900"
-         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium">Videos</a>
+         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">Videos</a>
+      <a routerLink="/book-views" routerLinkActive="bg-gray-100 text-gray-900"
+         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">Book Views</a>
+      <a routerLink="/video-views" routerLinkActive="bg-gray-100 text-gray-900"
+         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">Video Views</a>
+      <a routerLink="/book-comments" routerLinkActive="bg-gray-100 text-gray-900"
+         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">Book Comments</a>
+      <a routerLink="/video-comments" routerLinkActive="bg-gray-100 text-gray-900"
+         class="text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap">Video Comments</a>
     </div>
   </div>
 </nav>

@@ -1,0 +1,8 @@
+<div>
+  <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold mb-4 sm:mb-0 flex items-center">
+      <i class="fas fa-plus-circle mr-2 text-indigo-500"></i> Record Video View
+    </h1>
+  </div>
+  <app-video-views-form [isLoading]="isLoading" (onSubmit)="onSubmit($event)"></app-video-views-form>
+</div>

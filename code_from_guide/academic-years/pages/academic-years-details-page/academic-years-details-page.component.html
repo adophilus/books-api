@@ -1,0 +1,195 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-6">
+    <button
+      (click)="onBack()"
+      class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+    >
+      <i class="fas fa-arrow-left text-gray-600"></i>
+    </button>
+    <h1 class="text-2xl font-semibold text-gray-900">
+      Détails de l'année académique
+    </h1>
+  </div>
+
+  <!-- Loading State -->
+  <div
+    *ngIf="isLoading"
+    class="flex flex-col items-center justify-center py-12 gap-4"
+  >
+    <i class="fas fa-spinner fa-spin text-3xl text-blue-600"></i>
+    <p class="text-gray-600">Chargement des détails...</p>
+  </div>
+
+  <!-- Error State -->
+  <div
+    *ngIf="hasError && !isLoading"
+    class="flex flex-col items-center justify-center py-12 gap-6"
+  >
+    <div
+      class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center"
+    >
+      <i class="fas fa-exclamation-triangle text-red-600"></i>
+    </div>
+    <p class="text-gray-600">{{ errorMessage }}</p>
+    <button
+      (click)="loadAcademicYear()"
+      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+    >
+      Réessayer
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div
+    *ngIf="academicYear && !isLoading && !hasError"
+    class="bg-white rounded-lg"
+  >
+    <!-- Card Header -->
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-2">
+          <h2 class="text-xl font-semibold text-gray-900">
+            {{ academicYear.year }}
+          </h2>
+          <div>
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [class]="
+                academicYear.isCurrent
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-gray-100 text-gray-800'
+              "
+            >
+              <i
+                class="mr-1"
+                [class]="
+                  academicYear.isCurrent
+                    ? 'fas fa-check-circle'
+                    : 'fas fa-circle'
+                "
+              ></i>
+              {{ academicYear.isCurrent ? "Année active" : "Année inactive" }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Content -->
+    <div class="px-6 py-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500">
+            <i class="fas fa-calendar-alt mr-1"></i>
+            Année
+          </label>
+          <p class="text-sm text-gray-900">{{ academicYear.year }}</p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500">
+            <i class="fas fa-play mr-1"></i>
+            Date de début
+          </label>
+          <p class="text-sm text-gray-900">
+            {{ academicYear.startDate | date : "dd/MM/yyyy" }}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500">
+            <i class="fas fa-stop mr-1"></i>
+            Date de fin
+          </label>
+          <p class="text-sm text-gray-900">
+            {{ academicYear.endDate | date : "dd/MM/yyyy" }}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500">
+            <i class="fas fa-school mr-1"></i>
+            École
+          </label>
+          <p class="text-sm text-gray-900">{{ academicYear.school.name }}</p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500">
+            <i class="fas fa-barcode mr-1"></i>
+            Code
+          </label>
+          <p class="text-sm text-gray-900">{{ academicYear.code }}</p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            Statut
+          </label>
+          <p class="text-sm text-gray-900">
+            {{ academicYear.isCurrent ? "Active" : "Inactive" }}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500">
+            <i class="fas fa-plus-circle mr-1"></i>
+            Créée le
+          </label>
+          <p class="text-sm text-gray-900">
+            {{ academicYear.createdAt | date : "dd/MM/yyyy HH:mm" }}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500">
+            <i class="fas fa-edit mr-1"></i>
+            Modifiée le
+          </label>
+          <p class="text-sm text-gray-900">
+            {{ academicYear.updatedAt | date : "dd/MM/yyyy HH:mm" }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Actions -->
+    <div
+      class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between flex-wrap gap-4"
+    >
+      <div class="flex items-center gap-4">
+        <!-- Activate Button -->
+        <button
+          *ngIf="!academicYear.isCurrent"
+          (click)="onActivateAcademicYear()"
+          [disabled]="isActivating"
+          class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          <i *ngIf="isActivating" class="fas fa-spinner fa-spin mr-2"></i>
+          <i *ngIf="!isActivating" class="fas fa-check-circle mr-2"></i>
+          {{ isActivating ? "Activation..." : "Activer cette année" }}
+        </button>
+
+        <!-- Active Badge -->
+        <div
+          *ngIf="academicYear.isCurrent"
+          class="inline-flex items-center text-green-700"
+        >
+          <i class="fas fa-check-circle mr-2"></i>
+          <span class="font-medium">Année académique active</span>
+        </div>
+      </div>
+
+      <!-- Edit Button -->
+      <button
+        (click)="onEdit()"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+      >
+        <i class="fas fa-edit mr-2"></i>
+        Modifier
+      </button>
+    </div>
+  </div>
+</div>
