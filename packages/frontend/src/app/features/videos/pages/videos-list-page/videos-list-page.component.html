@@ -3,37 +3,41 @@
     <h1 class="text-2xl font-bold text-gray-900">
       <i class="fas fa-video mr-2 text-indigo-500"></i> Videos
     </h1>
+    <button (click)="goToCreate()"
+      class="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+      <i class="fas fa-plus"></i> Add Video
+    </button>
   </div>
 
-  @if (isLoading) {
+  @if (loading) {
     <div class="flex items-center justify-center py-12">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
     </div>
   }
 
-  @if (!isLoading && hasError) {
-    <app-generic-error [message]="errorMessage"></app-generic-error>
+  @if (!loading && error) {
+    <app-generic-error message="An error occurred while loading videos."></app-generic-error>
   }
 
-  @if (!isLoading && !hasError) {
+  @if (!loading && !error) {
     <app-videos-datatable
       [items]="items"
       [isLoading]="false"
       [hasError]="false"
-      (create)="handleCreate()"
-      (view)="handleView($event)"
-      (update)="handleUpdate($event)"
-      (delete)="handleDelete($event)"
+      (create)="goToCreate()"
+      (view)="goToDetails($event)"
+      (update)="goToUpdate($event)"
+      (delete)="askDelete($event)"
     ></app-videos-datatable>
 
     <div class="flex justify-end mt-4">
       <app-generic-paginator
-        [currentPage]="page"
+        [currentPage]="filter.page ?? 1"
         [totalPages]="totalPages"
         [maxVisible]="5"
-        [totalItems]="totalItems"
-        [itemsPerPage]="limit"
-        (pageChange)="onPageChange($event)"
+        [totalItems]="total"
+        [itemsPerPage]="filter.limit ?? 10"
+        (pageChange)="onPageChange({ page: $event, limit: filter.limit ?? 10 })"
       ></app-generic-paginator>
     </div>
   }

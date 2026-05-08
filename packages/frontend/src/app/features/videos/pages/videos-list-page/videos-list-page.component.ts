@@ -1,11 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ActivatedRoute, Router } from "@angular/router";
-import { MatDialog } from "@angular/material/dialog";
-import { TranslocoService, TranslocoModule } from "@ngneat/transloco";
+import { Router } from "@angular/router";
 
-import { BaseListPageComponent } from "@1hand/pages/base-list-page/base-list-page.component";
-import { Video } from "../../videos.types";
+import { Video, FilterVideoDto } from "../../videos.types";
 import { VideosService } from "../../videos.service";
 import { VideosDatatableComponent } from "../../components/videos-datatable/videos-datatable.component";
 import { GenericPaginatorComponent } from "@1hand/components/generic-paginator/generic-paginator.component";
@@ -14,27 +11,76 @@ import { GenericErrorComponent } from "@1hand/components/generic-error/generic-e
 @Component({
   selector: "app-videos-list-page",
   standalone: true,
-  imports: [CommonModule, VideosDatatableComponent, GenericPaginatorComponent, GenericErrorComponent, TranslocoModule],
+  imports: [
+    CommonModule,
+    VideosDatatableComponent,
+    GenericPaginatorComponent,
+    GenericErrorComponent,
+  ],
   templateUrl: "./videos-list-page.component.html",
 })
-export class VideosListPageComponent extends BaseListPageComponent<Video> implements OnInit {
-  moduleName = "videos";
-  search = "";
+export class VideosListPageComponent implements OnInit {
+  items: Video[] = [];
+  total = 0;
+  loading = false;
+  error?: unknown;
 
-  constructor(service: VideosService, route: ActivatedRoute, router: Router, transloco: TranslocoService, dialog: MatDialog) {
-    super(service, route, router, transloco, dialog);
+  filter: FilterVideoDto = {
+    page: 1,
+    limit: 10,
+  };
+
+  constructor(
+    private readonly videosService: VideosService,
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadItems();
   }
 
-  protected onParamsInit(params: any): void { this.search = params["search"] || ""; }
-  protected getListParams(): any { return { page: this.page, limit: this.limit, search: this.search || undefined }; }
-  protected getItemId(item: Video): string { return item.id; }
-  protected getItemLabel(item: Video): string { return item.title; }
-  protected getDeleteTitle(item: Video): string { return this.transloco.translate(`${this.moduleName}.delete.title`, { name: item.title }); }
-  protected getDeleteMessage(item: Video): string { return this.transloco.translate(`${this.moduleName}.delete.message`, { name: item.title }); }
+  loadItems(): void {
+    this.loading = true;
+    this.error = undefined;
 
-  onPageChange(newPage: number): void { this.page = newPage; this.updateQueryParams(); this.loadItems(); }
-  handleCreate(): void { this.router.navigate(["./create"], { relativeTo: this.route }); }
-  handleView(item: Video): void { this.router.navigate(["./", item.id], { relativeTo: this.route }); }
-  handleUpdate(item: Video): void { this.router.navigate(["./", item.id, "update"], { relativeTo: this.route }); }
-  override handleDelete(item: Video): void { super.handleDelete(item); }
+    this.videosService.selectMany(this.filter).subscribe({
+      next: (response) => {
+        this.items = response.data;
+        this.total = response.total;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.error = error;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  goToCreate(): void {
+    this.router.navigate(["/videos", "create"]);
+  }
+
+  goToDetails(video: Video): void {
+    this.router.navigate(["/videos", video.id]);
+  }
+
+  goToUpdate(video: Video): void {
+    this.router.navigate(["/videos", video.id, "update"]);
+  }
+
+  onPageChange(event: { page: number; limit: number }): void {
+    this.filter = { ...this.filter, ...event };
+    this.loadItems();
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.total / (this.filter.limit || 10));
+  }
+
+  askDelete(video: Video): void {
+    this.videosService.delete(video.id).subscribe(() => this.loadItems());
+  }
 }

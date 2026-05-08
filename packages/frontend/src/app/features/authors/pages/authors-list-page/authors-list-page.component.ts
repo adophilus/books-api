@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 
@@ -33,6 +33,7 @@ export class AuthorsListPageComponent implements OnInit {
   constructor(
     private readonly authorsService: AuthorsService,
     private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -48,10 +49,12 @@ export class AuthorsListPageComponent implements OnInit {
         this.items = response.data;
         this.total = response.total;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.error = error;
         this.loading = false;
+        this.cdr.detectChanges();
       },
     });
   }
