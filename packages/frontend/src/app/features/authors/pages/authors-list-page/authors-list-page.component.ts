@@ -1,11 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ActivatedRoute, Router } from "@angular/router";
-import { MatDialog } from "@angular/material/dialog";
-import { TranslocoService, TranslocoModule } from "@ngneat/transloco";
+import { Router } from "@angular/router";
 
-import { BaseListPageComponent } from "@1hand/pages/base-list-page/base-list-page.component";
-import { Author } from "../../authors.types";
+import { Author, FilterAuthorDto } from "../../authors.types";
 import { AuthorsService } from "../../authors.service";
 import { AuthorsDatatableComponent } from "../../components/authors-datatable/authors-datatable.component";
 import { GenericPaginatorComponent } from "@1hand/components/generic-paginator/generic-paginator.component";
@@ -19,78 +16,68 @@ import { GenericErrorComponent } from "@1hand/components/generic-error/generic-e
     AuthorsDatatableComponent,
     GenericPaginatorComponent,
     GenericErrorComponent,
-    TranslocoModule,
   ],
   templateUrl: "./authors-list-page.component.html",
 })
-export class AuthorsListPageComponent
-  extends BaseListPageComponent<Author>
-  implements OnInit
-{
-  moduleName = "authors";
-  search = "";
+export class AuthorsListPageComponent implements OnInit {
+  items: Author[] = [];
+  total = 0;
+  loading = false;
+  error?: unknown;
+
+  filter: FilterAuthorDto = {
+    page: 1,
+    limit: 10,
+  };
 
   constructor(
-    service: AuthorsService,
-    route: ActivatedRoute,
-    router: Router,
-    transloco: TranslocoService,
-    dialog: MatDialog
-  ) {
-    super(service, route, router, transloco, dialog);
-  }
+    private readonly authorsService: AuthorsService,
+    private readonly router: Router,
+  ) {}
 
-  protected onParamsInit(params: any): void {
-    this.search = params["search"] || "";
-  }
-
-  protected getListParams(): any {
-    return {
-      page: this.page,
-      limit: this.limit,
-      search: this.search || undefined,
-    };
-  }
-
-  protected getItemId(item: Author): string {
-    return item.id;
-  }
-
-  protected getItemLabel(item: Author): string {
-    return item.name;
-  }
-
-  protected getDeleteTitle(item: Author): string {
-    return this.transloco.translate(`${this.moduleName}.delete.title`, {
-      name: item.name,
-    });
-  }
-
-  protected getDeleteMessage(item: Author): string {
-    return this.transloco.translate(`${this.moduleName}.delete.message`, {
-      name: item.name,
-    });
-  }
-
-  onPageChange(newPage: number): void {
-    this.page = newPage;
-    this.updateQueryParams();
+  ngOnInit(): void {
     this.loadItems();
   }
 
-  handleCreate(): void {
-    this.router.navigate(["./create"], { relativeTo: this.route });
+  loadItems(): void {
+    this.loading = true;
+    this.error = undefined;
+
+    this.authorsService.selectMany(this.filter).subscribe({
+      next: (response) => {
+        this.items = response.data;
+        this.total = response.total;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = error;
+        this.loading = false;
+      },
+    });
   }
 
-  handleView(item: Author): void {
-    this.router.navigate(["./", item.id], { relativeTo: this.route });
+  goToCreate(): void {
+    this.router.navigate(["/authors", "create"]);
   }
 
-  handleUpdate(item: Author): void {
-    this.router.navigate(["./", item.id, "update"], { relativeTo: this.route });
+  goToDetails(author: Author): void {
+    this.router.navigate(["/authors", author.id]);
   }
 
-  override handleDelete(item: Author): void {
-    super.handleDelete(item);
+  goToUpdate(author: Author): void {
+    this.router.navigate(["/authors", author.id, "update"]);
+  }
+
+  onPageChange(event: { page: number; limit: number }): void {
+    this.filter = { ...this.filter, ...event };
+    this.loadItems();
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.total / (this.filter.limit || 10));
+  }
+
+  askDelete(author: Author): void {
+    this.authorsService.delete(author.id).subscribe(() => this.loadItems());
   }
 }
