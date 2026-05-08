@@ -1,4 +1,4 @@
-import { Account } from '../generated/prisma';
+import { Account } from '../generated/prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import slugify from 'slugify';
